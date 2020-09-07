@@ -1,2 +1,3 @@
-# drupal-dockerizer-
-Drupal dockerized 
+# Drupal Dockerizer
+
+Dockerized Drupal.
