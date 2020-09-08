@@ -1,0 +1,52 @@
+---
+
+- hosts: server
+
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - name: Include config override file, if it exists.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - config.yml
+
+  roles: []
+
+  tasks:
+    - name: include project setup tasks.
+      when: init_project
+      include: tasks/project-setup.yml
+
+    - name: Include lamp setup tasks
+      include: tasks/lamp-setup.yml
+
+    - name: Include solr setup tasks.
+      when: solr
+      include: tasks/solr-setup.yml
+
+    - name: Include Develop setup tasks
+      when: develop
+      include: tasks/develop-setup.yml
+
+    - name: Include Drush setup tasks
+      when: drush_install
+      include: tasks/drush-setup.yml
+
+    - name: Include Settings setup tasks
+      include: tasks/settings-setup.yml
+
+    - name: Include Docker up tasks
+      include: tasks/docker-up.yml
+
+    - name: Wait docker containers
+      pause:
+        seconds: 15
+
+    - name: Setup drupal task
+      when: drush_install and init_project
+      include: tasks/drush-command.yml
+
+    - name: Include Memcache setup tasks
+      when: memcache
+      include: tasks/memcache-setup.yml

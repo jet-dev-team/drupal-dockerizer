@@ -1,0 +1,31 @@
+---
+
+- name: Clone docker solr4 repository.
+  git:
+    repo: https://github.com/docker-solr/docker-solr4
+    dest: "{{ docker_runtime_dir }}/solr4"
+    version: master
+    clone: yes
+    update: yes
+    force: yes
+
+- name: Ensure Solr Core file is present.
+  template:
+    src: templates/solr4.core.j2
+    dest: "{{ docker_runtime_dir }}/solr4/core.properties"
+    mode: '644'
+
+- name: Copy drupal solr config.
+  copy:
+    src: "{{ drupal_root_dir }}/docroot/modules/contrib/search_api_solr/solr-conf/4.x/"
+    dest: "{{ docker_runtime_dir }}/solr4/conf"
+
+- name: Solr Setup.
+  blockinfile:
+    marker: 'RUN chown -R $SOLR_USER:$SOLR_GROUP /opt/docker-solr'
+    path: "{{ docker_runtime_dir }}/solr4/Dockerfile"
+    block: |
+      RUN mkdir /opt/solr/example/solr/{{ solr_core_name }}
+      COPY ./conf  /opt/solr/example/solr/{{ solr_core_name }}/conf
+      COPY ./core.properties /opt/solr/example/solr/{{ solr_core_name }}/core.properties
+      RUN chown -R $SOLR_USER:$SOLR_GROUP /opt/solr/example/solr/{{ solr_core_name }}

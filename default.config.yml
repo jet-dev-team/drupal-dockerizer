@@ -1,0 +1,54 @@
+---
+
+compose_project_name: my-project
+docker_runtime_dir: my-project
+docker_cached_volume: true
+
+# Path to Drupal dir (`vendor` forlder should be there).
+drupal_root_dir: /var/data/drupal
+drupal_web_root: web
+drupal_files_dir: /var/data/drupal_files
+drupal_hash_salt: demo_site
+
+apache_port: 80
+apache_port_ssl: 443
+domain_name: drupal.devel
+phpversion: php74
+
+# Add XDEBUG enviroment and route to /etc/hosts to domain.
+develop: true
+network_id: 105
+
+init_project: false
+composer_project: drupal/recommended-project
+comoser_extras:
+  - drush/drush
+  - drupal/admin_toolbar
+
+drush_install: true
+# Availible options: 8, 9, 10
+drush_version: 10
+
+# Drush commands to run (will be run by `run-drush-commands.yml` playbook or if init_project is true).
+drush_commands:
+  - 'cc drush'
+  - '-vy site:install minimal --account-pass=admin --site-name="Drupal Dockerizer"'
+  - 'theme:enable bartik claro -y'
+  - 'en datetime toolbar rest jsonapi views views_ui ban automated_cron action admin_toolbar -y'
+  - 'config-set system.theme default bartik -y'
+  - 'config-set system.theme admin claro -y'
+  - 'cron'
+
+solr: false
+solr_core_name: drupal
+
+memcache: false
+
+# Path to Drupal DB dump (will be imported by `db.yml` playbook).
+db_dump_path: /var/data/db/db.sql
+
+database: mysql
+mysql_root_password: root
+mysql_user: docker
+mysql_password: docker
+mysql_database: docker

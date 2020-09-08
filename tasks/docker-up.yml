@@ -1,0 +1,12 @@
+---
+
+- name: Stop all Docker containers if docker-compose.yml has changed.
+  command: >
+    docker-compose stop
+    chdir={{ docker_runtime_dir }}
+  when: docker_compose_file_result.changed
+
+- name: Bring up the Docker containers.
+  command: >
+    docker-compose up --build -d --remove-orphans
+    chdir={{ docker_runtime_dir }}
