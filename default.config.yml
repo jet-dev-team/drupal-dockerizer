@@ -20,7 +20,7 @@ phpversion: php74
 xdebug_enviroment: remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.105.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
 
 # Setup additional networking.
-additional_networking: false
+advanced_networking: false
 network_id: 105
 domain_name: drupal.devel
 

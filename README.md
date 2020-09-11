@@ -64,13 +64,13 @@ sudo ansible-playbook -vvv db.yml --connection=local
 
 ### Xdebug setup
 
-For additional network setup set in `config.yml` variable `xdebug_enviroment` like this
+For advanced network setup set in `config.yml` variable `xdebug_enviroment` like this
 
 ```bash
 remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.{network_id}.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
 ```
 
-For work Xdebug with additional networking in vscode add to your launcher.json file in project next lines:
+For work Xdebug with advanced networking in vscode add to your launcher.json file in project next lines:
 
 ```json
     {
@@ -97,21 +97,21 @@ For MacOs or Windows machine set to:
 remote_enable=1 remote_connect_back=0 remote_port=9000 remote_host=host.docker.internal show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
 ```
 
-### Additional Networking
+### Advanced Networking
 
-You can use an additional docker network to be able to conveniently host multiple Drupal projects on one computer.
+You can use an advanced docker network to be able to conveniently host multiple Drupal projects on one computer.
 
-Set in config.yml `additional_networking: true`.
+Set in config.yml `advanced_networking: true`.
 
 You can change the ip address of the project using the variable `network_id` in `config.yml` file
 
 You can change doamin name by variable `domain_name` in `config.yml` file
 
-#### Additional Networking Limitation
+#### Advanced Networking Limitation
 
-The additional network only works on a machine with a Linux distribution.
+The advanced network only works on a machine with a Linux distribution.
 
-#### Additional Networking project structure
+#### Advanced Networking project structure
 
 - `Adminer` placed on domain name and on 8080 port.
 - Solr 4 placed on domain name and on 8983 port and /solr path. `http://drupal.devel:8983/solr` for examle.

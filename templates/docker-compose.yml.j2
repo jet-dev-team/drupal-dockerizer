@@ -6,7 +6,7 @@ services:
     image: memcached:1.6
     restart: 'always'
     container_name: '{{ compose_project_name }}-memcached'
-{% if additional_networking %}
+{% if advanced_networking %}
     networks:
       - {{ compose_project_name }}-network
 {% endif %}
@@ -22,7 +22,7 @@ services:
       - memcached
 {% endif %}
       - database
-{% if not additional_networking %}
+{% if not advanced_networking %}
     ports:
       - "{{ apache_port }}:80"
       - "{{ apache_port_ssl }}:443"
@@ -43,7 +43,7 @@ services:
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
     environment:
       XDEBUG_CONFIG: {{ xdebug_enviroment }}
-{% if additional_networking %}
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.10
@@ -63,7 +63,7 @@ services:
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
       MYSQL_PASSWORD: {{ mysql_password }}
-{% if additional_networking %}
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.13
@@ -75,7 +75,7 @@ services:
     restart: 'always'
     build:
       context: "./solr4"
-{% if additional_networking %}
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.12
@@ -87,12 +87,12 @@ services:
     image: adminer
     container_name: '{{ compose_project_name }}-adminer'
     restart: always
-{% if additional_networking %}
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.11
 {% endif %}
-{% if not additional_networking %}
+{% if not advanced_networking %}
     ports:
       - "{{ adminer_port }}:8080"
 {% endif %}
@@ -100,7 +100,7 @@ services:
       - database
 {% endif %}
 
-{% if additional_networking %}
+{% if advanced_networking %}
 networks:
   {{ compose_project_name }}-network:
     driver: bridge
