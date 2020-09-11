@@ -33,7 +33,7 @@
         ],
       ];
       $settings["file_temp_path"] = '/tmp';
-      $settings['config_sync_directory'] = 'sites/default/files/sync';
+      $settings['config_sync_directory'] = 'sites/default/sync';
       $settings['trusted_host_patterns'] = ['{{ domain_name }}'];
       {% if solr %}
       $config['search_api.server.solr']['backend_config']['connector_config']['host'] = '{{ compose_project_name }}-solr';
