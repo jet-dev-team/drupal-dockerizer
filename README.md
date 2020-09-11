@@ -1,6 +1,4 @@
-# YMCA NORTH Docker Compose LAMP
-
-Stage, builds and local development stuff for ymcanorth.org.
+# Drupal Dockerizer
 
 ## Requirements
 
@@ -33,8 +31,6 @@ cp default.config.yml config.yml
 ```
 
 Set your preferred settings.
-
-
 
 ### Get all the requirements
 
@@ -69,17 +65,17 @@ sudo ansible-playbook -vvv db.yml --connection=local
 ### Development mode
 
 Set in config.yml `develop: true`
-For work Xdebug in vscode add to your launcher.json file in ymcanorth project next lines:
+For work Xdebug in vscode add to your launcher.json file in project next lines:
 
 ```json
     {
       "name": "XDebug Docker",
       "type": "php",
       "request": "launch",
-      "hostname" : "192.168.220.1",
+      "hostname" : "192.168.{network_id}.1",
       "port": 9008,
       "pathMappings": {
-        "/var/www": "${workspaceRoot}"
+        "/var/www": "${workspaceRoot}/path_to_project"
       },
       "xdebugSettings": {
         "show_hidden": 1,
@@ -94,7 +90,7 @@ For work Xdebug in vscode add to your launcher.json file in ymcanorth project ne
 
 - Site placed on domain name and on 80 port.
 - `Adminer` placed on domain name and on 8080 port.
-- Solr 4 placed on domain name and on 8983 port and /solr path. `http://ymcanorth.devel:8983/solr` for examle.
+- Solr 4 placed on domain name and on 8983 port and /solr path. `http://drupal.devel:8983/solr` for examle.
 - Data Base placed on 192.168.<<network_id>>.13 and on 3306 port. You can connect to DB by vscode [extension](https://marketplace.visualstudio.com/items?itemName=formulahendry.vscode-mysql) or from `Adminer`
 
 ### Drush usage
