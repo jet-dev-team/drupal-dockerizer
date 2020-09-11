@@ -6,13 +6,14 @@
     state: directory
     recurse: yes
     mode: '1777'
+    owner: "{{ host_machine_user }}"
 
 - name: Copy file with owner and permission, using symbolic representation
   copy:
     src: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/default.settings.php"
     dest: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
     mode: '444'
-
+    owner: "{{ host_machine_user }}"
 
 - name: Add DB connection to settings.php
   blockinfile:
