@@ -42,7 +42,7 @@ services:
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
     environment:
-      XDEBUG_CONFIG: {{ xdebug_enviroment }}
+      XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
 {% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
