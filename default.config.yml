@@ -14,12 +14,15 @@ drupal_hash_salt: demo_site
 
 apache_port: 80
 apache_port_ssl: 443
-domain_name: drupal.devel
 phpversion: php74
 
-# Add XDEBUG enviroment and route to /etc/hosts to domain.
-develop: false
+# Enviroment variable for php xdebug extensions
+xdebug_enviroment: remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.105.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
+
+# Setup additional networking.
+additional_networking: false
 network_id: 105
+domain_name: drupal.devel
 
 init_project: false
 composer_project: drupal/recommended-project
@@ -54,3 +57,6 @@ mysql_root_password: root
 mysql_user: docker
 mysql_password: docker
 mysql_database: docker
+
+install_adminer: false
+adminer_port: 8080

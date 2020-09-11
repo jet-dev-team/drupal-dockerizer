@@ -62,10 +62,15 @@ cd <project>/docker
 sudo ansible-playbook -vvv db.yml --connection=local
 ```
 
-### Development mode
+### Xdebug setup
 
-Set in config.yml `develop: true`
-For work Xdebug in vscode add to your launcher.json file in project next lines:
+For additional network setup set in `config.yml` variable `xdebug_enviroment` like this
+
+```bash
+remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.{network_id}.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
+```
+
+For work Xdebug with additional networking in vscode add to your launcher.json file in project next lines:
 
 ```json
     {
@@ -75,7 +80,7 @@ For work Xdebug in vscode add to your launcher.json file in project next lines:
       "hostname" : "192.168.{network_id}.1",
       "port": 9008,
       "pathMappings": {
-        "/var/www": "${workspaceRoot}/path_to_project"
+        "/var/www": "${workspaceRoot}/path_to_drupal_project"
       },
       "xdebugSettings": {
         "show_hidden": 1,
@@ -86,9 +91,28 @@ For work Xdebug in vscode add to your launcher.json file in project next lines:
     },
 ```
 
-#### Development project structure
+For MacOs or Windows machine set to:
 
-- Site placed on domain name and on 80 port.
+```bash
+remote_enable=1 remote_connect_back=0 remote_port=9000 remote_host=host.docker.internal show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
+```
+
+### Additional Networking
+
+You can use an additional docker network to be able to conveniently host multiple Drupal projects on one computer.
+
+Set in config.yml `additional_networking: true`.
+
+You can change the ip address of the project using the variable `network_id` in `config.yml` file
+
+You can change doamin name by variable `domain_name` in `config.yml` file
+
+#### Additional Networking Limitation
+
+The additional network only works on a machine with a Linux distribution.
+
+#### Additional Networking project structure
+
 - `Adminer` placed on domain name and on 8080 port.
 - Solr 4 placed on domain name and on 8983 port and /solr path. `http://drupal.devel:8983/solr` for examle.
 - Data Base placed on 192.168.<<network_id>>.13 and on 3306 port. You can connect to DB by vscode [extension](https://marketplace.visualstudio.com/items?itemName=formulahendry.vscode-mysql) or from `Adminer`

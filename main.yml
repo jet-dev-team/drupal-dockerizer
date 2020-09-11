@@ -25,9 +25,9 @@
       when: solr
       include: tasks/solr-setup.yml
 
-    - name: Include Develop setup tasks
-      when: develop
-      include: tasks/develop-setup.yml
+    - name: Include Additional Networking setup tasks
+      when: additional_networking
+      include: tasks/additional-networking-setup.yml
 
     - name: Include Drush setup tasks
       when: drush_install
