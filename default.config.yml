@@ -6,9 +6,10 @@ docker_cached_volume: true
 
 host_machine_user: myusername
 
-# Path to Drupal dir (`vendor` forlder should be there).
+# Absolute Path to Drupal dir (`vendor` forlder should be there).
 drupal_root_dir: /var/data/drupal
 drupal_web_root: web
+# Absolute Path to Drupal files dir.
 drupal_files_dir: /var/data/drupal_files
 drupal_hash_salt: demo_site
 
