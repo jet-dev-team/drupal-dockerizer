@@ -1,0 +1,31 @@
+---
+
+- name: Clone docker drupal lamp repository.
+  git:
+    repo: https://github.com/jet-dev-team/docker-compose-lamp.git
+    dest: "{{ docker_runtime_dir }}"
+    version: drupal
+    clone: yes
+    update: yes
+    force: yes
+
+- name: Ensure Apache2 config is present.
+  template:
+    src: templates/apache.conf.j2
+    dest: "{{ docker_runtime_dir }}/config/vhosts/default.conf"
+    mode: '644'
+  register: docker_compose_file_result
+
+- name: Ensure PHP config is present.
+  template:
+    src: templates/php.ini.j2
+    dest: "{{ docker_runtime_dir }}/config/php/php.ini"
+    mode: '644'
+  register: docker_compose_file_result
+
+- name: Ensure Docker Compose file is present.
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ docker_runtime_dir }}/docker-compose.yml"
+    mode: '644'
+  register: docker_compose_file_result

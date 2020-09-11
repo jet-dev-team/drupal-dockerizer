@@ -1,0 +1,10 @@
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot "/var/www/{{ drupal_web_root }}"
+    ServerName {{ domain_name }}
+	<Directory "/var/www/{{ drupal_web_root }}/">
+		Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+	</Directory>
+</VirtualHost>

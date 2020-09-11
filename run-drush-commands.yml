@@ -1,0 +1,21 @@
+---
+
+- hosts: server
+  become: yes
+
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - name: Include config override file, if it exists.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - config.yml
+
+  roles: []
+
+  tasks:
+
+    - name: Run Drush commands.
+      when: drush_install
+      include: tasks/drush-command.yml
