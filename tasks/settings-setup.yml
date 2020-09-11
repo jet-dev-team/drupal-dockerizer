@@ -6,13 +6,14 @@
     state: directory
     recurse: yes
     mode: '1777'
+    owner: "{{ host_machine_user }}"
 
 - name: Copy file with owner and permission, using symbolic representation
   copy:
     src: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/default.settings.php"
     dest: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
     mode: '444'
-
+    owner: "{{ host_machine_user }}"
 
 - name: Add DB connection to settings.php
   blockinfile:
@@ -34,7 +35,7 @@
       ];
       $settings["file_temp_path"] = '/tmp';
       $settings['config_sync_directory'] = 'sites/default/sync';
-      $settings['trusted_host_patterns'] = ['{{ domain_name }}'];
+      $settings['trusted_host_patterns'] = [];
       {% if solr %}
       $config['search_api.server.solr']['backend_config']['connector_config']['host'] = '{{ compose_project_name }}-solr';
       {% endif %}
