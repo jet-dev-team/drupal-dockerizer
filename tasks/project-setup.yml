@@ -6,7 +6,7 @@
   composer:
     command: create-project
     arguments: "{{composer_project}} {{ drupal_root_dir }}"
-    working_dir: "/tmp"
+    working_dir: "./"
     prefer_dist: yes
 
 - name: Require extra packages.

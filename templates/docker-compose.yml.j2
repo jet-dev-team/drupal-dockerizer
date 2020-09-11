@@ -6,7 +6,7 @@ services:
     image: memcached:1.6
     restart: 'always'
     container_name: '{{ compose_project_name }}-memcached'
-{% if develop %}
+{% if advanced_networking %}
     networks:
       - {{ compose_project_name }}-network
 {% endif %}
@@ -22,7 +22,7 @@ services:
       - memcached
 {% endif %}
       - database
-{% if not develop %}
+{% if not advanced_networking %}
     ports:
       - "{{ apache_port }}:80"
       - "{{ apache_port_ssl }}:443"
@@ -41,9 +41,9 @@ services:
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini{{ ":cached" if docker_cached_volume }}
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
-{% if develop %}
     environment:
-      XDEBUG_CONFIG: "remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.{{ network_id }}.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE"
+      XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.10
@@ -63,7 +63,7 @@ services:
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
       MYSQL_PASSWORD: {{ mysql_password }}
-{% if develop %}
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.13
@@ -75,24 +75,32 @@ services:
     restart: 'always'
     build:
       context: "./solr4"
-{% if develop %}
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.12
 {% endif %}
 {% endif %}
 
-{% if develop %}
+{% if install_adminer %}
   adminer:
     image: adminer
     container_name: '{{ compose_project_name }}-adminer'
     restart: always
+{% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: 192.168.{{ network_id }}.11
+{% endif %}
+{% if not advanced_networking %}
+    ports:
+      - "{{ adminer_port }}:8080"
+{% endif %}
     links:
       - database
+{% endif %}
 
+{% if advanced_networking %}
 networks:
   {{ compose_project_name }}-network:
     driver: bridge

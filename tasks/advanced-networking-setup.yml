@@ -1,13 +1,5 @@
 ---
 
-# - name: Develop mode
-#   blockinfile:
-#     marker: '# Install xdebug'
-#     path: "{{ docker_runtime_dir }}/bin/{{phpversion}}/Dockerfile"
-#     block: |
-#       RUN pecl install xdebug-2.6.0
-#       RUN docker-php-ext-enable xdebug
-
 - name: Add Host name to /etc/hosts
   blockinfile:
     marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
