@@ -17,6 +17,7 @@ services:
       context: ./bin/{{ phpversion }}
     container_name: '{{ compose_project_name }}-{{ phpversion }}'
     restart: 'always'
+    working_dir: /var/www/{{ drupal_web_root }}
     depends_on:
 {% if memcache %}
       - memcached
