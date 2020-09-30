@@ -48,7 +48,7 @@ cd <project>/docker
 sudo ansible-playbook -vvv main.yml --connection=local --extra-vars=init_project=true
 ```
 
-### Start local environment
+### Start local environment for existing project
 
 ```bash
 cd <project>/docker
