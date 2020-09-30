@@ -8,6 +8,7 @@ host_machine_user: myusername
 
 # Absolute Path to Drupal dir (`vendor` forlder should be there).
 drupal_root_dir: /var/data/drupal
+# Name of "web" folder inside `drupal_root_dir`.
 drupal_web_root: web
 # Absolute Path to Drupal files dir.
 drupal_files_dir: /var/data/drupal_files
@@ -15,6 +16,8 @@ drupal_hash_salt: demo_site
 
 apache_port: 80
 apache_port_ssl: 443
+
+# Look at available options here: https://github.com/jet-dev-team/docker-compose-lamp/tree/drupal/bin
 phpversion: php74
 
 # Enviroment variable for php xdebug extensions
