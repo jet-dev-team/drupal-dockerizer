@@ -61,3 +61,8 @@ mysql_database: docker
 
 install_adminer: false
 adminer_port: 8080
+
+custom_drupal_settings: |
+  if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
+    include $app_root . '/' . $site_path . '/settings.local.php';
+  }

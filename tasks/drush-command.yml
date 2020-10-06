@@ -9,5 +9,5 @@
 - name: Run command in container.
   delegate_to: "{{ compose_project_name }}-{{ phpversion }}"
   become: no
-  raw: "drush {{item}}"
+  raw: "drush -vy {{item}}"
   loop: "{{ drush_commands }}"
