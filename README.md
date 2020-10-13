@@ -36,6 +36,7 @@ sudo ansible-playbook -vvv main.yml --connection=local --extra-vars=init_project
 ```bash
 cd drupal-dockerizer
 sudo ansible-playbook -vvv main.yml --connection=local
+sudo ansible-playbook -vvv run-drush-commands.yml --connection=local
 ```
 
 ### Import database from dump
