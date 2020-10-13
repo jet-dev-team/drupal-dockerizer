@@ -12,7 +12,7 @@
 
 ### Prepare project structure
 
-- `db`: crate this directory and download database dump here if exists.
+- `db`: create this directory and download database dump here if exists.
 - `code`: clone your project files into this directory.
 - `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
 - `files`: create the directory and pull Drupal assets here
