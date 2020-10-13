@@ -129,3 +129,9 @@ drush_commands:
 cd <project>/docker
 sudo ansible-playbook -vvv reset.yml --connection=local
 ```
+
+### How to clear Docker cache?
+
+```bash
+docker system prune -a
+```
