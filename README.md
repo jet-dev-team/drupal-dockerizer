@@ -64,7 +64,7 @@ For work Xdebug with advanced networking in vscode add to your launcher.json fil
       "hostname" : "192.168.{network_id}.1",
       "port": 9008,
       "pathMappings": {
-        "/var/www": "${workspaceRoot}/path_to_drupal_project"
+        "/var/www": "${workspaceRoot}/<path_to_drupal_project>"
       },
       "xdebugSettings": {
         "show_hidden": 1,
@@ -75,10 +75,39 @@ For work Xdebug with advanced networking in vscode add to your launcher.json fil
     },
 ```
 
-For MacOs or Windows machine set to:
+#### For MacOs the next config should be used
+
+Make sure your `config.yml` contains the next config:
 
 ```bash
-remote_enable=1 remote_connect_back=0 remote_port=9000 remote_host=host.docker.internal show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
+# Enviroment variable for php xdebug extensions
+xdebug_enviroment: remote_enable=1 remote_connect_back=0 remote_port=9000 remote_host=10.254.254.254 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
+```
+
+Make sure you've created Host address alias on MacOS:
+
+```bash
+sudo ifconfig lo0 alias 10.254.254.254
+```
+
+Your `launch.json` should look like the next config:
+
+```json
+    {
+      "name": "XDebug Docker",
+      "type": "php",
+      "request": "launch",
+      "port": 9000,
+      "pathMappings": {
+        "/var/www": "${workspaceRoot}/<path_to_drupal_project>"
+      },
+      "xdebugSettings": {
+        "show_hidden": 1,
+        "max_data": -1,
+        "max_depth": 2,
+        "max_children": 100,
+      }
+    
 ```
 
 ### Advanced Networking
