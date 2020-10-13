@@ -2,7 +2,6 @@
 
 ## Requirements
 
-- Ubuntu >= 20.04
 - Python >= 3.5
 - Docker
 - Docker Compose
