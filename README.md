@@ -110,6 +110,12 @@ Your `launch.json` should look like the next config:
     
 ```
 
+How to use debugger with Drush commands?
+
+1. Get the name of web server container using command: `docker ps | grep webserver`
+2. SSH into the container by name. Example: `docker exec -it yourproject-php72-develop bash`
+3. Set your breakpoint and run Drush command as usual
+
 ### Advanced Networking
 
 You can use an advanced docker network to be able to conveniently host multiple Drupal projects on one computer.
