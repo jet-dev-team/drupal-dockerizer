@@ -10,54 +10,38 @@
 
 ## Quickstart
 
-### Get the code of this repository to your project directory
+### Prepare project structure
 
-Example project structure:
+- `db`: crate this directory and download database dump here if exists.
+- `code`: clone your project files into this directory.
+- `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
+- `files`: create the directory and pull Drupal assets here
 
-```
-<project>/
-  - db/
-  - code/
-  - docker/
-  - files/
-```
-
-### Prepare your config
+### Prepare your config for Drupal Dockerizer
 
 ```bash
-cd <project>/docker
+cd drupal-dockerizer
 cp default.config.yml config.yml
 ```
-
-Set your preferred settings.
-
-### Get all the requirements
-
-```bash
-cd <project>/docker
-ansible-galaxy install -r requirements.yml
-```
-
-Do not worry if there is an error about empty requirements.
 
 ### Start new local environment
 
 ```bash
-cd <project>/docker
+cd drupal-dockerizer
 sudo ansible-playbook -vvv main.yml --connection=local --extra-vars=init_project=true
 ```
 
 ### Start local environment for existing project
 
 ```bash
-cd <project>/docker
+cd drupal-dockerizer
 sudo ansible-playbook -vvv main.yml --connection=local
 ```
 
 ### Import database from dump
 
 ```bash
-cd <project>/docker
+cd drupal-dockerizer
 sudo ansible-playbook -vvv db.yml --connection=local
 ```
 
