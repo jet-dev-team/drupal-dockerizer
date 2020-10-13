@@ -165,3 +165,9 @@ sudo ansible-playbook -vvv reset.yml --connection=local
 ```bash
 docker system prune -a
 ```
+
+### How to enhance MacOS performance?
+
+- make sure your `config.yml` contains `docker_cached_volume: true`
+- make sure you add more resources to Docker via Preferences -> Recources
+- make sure you set `debug` to `false` in Docker Engine preferences
