@@ -51,7 +51,7 @@ drush_commands:
 solr: false
 solr_core_name: drupal
 
-# For woking in new prtoject add to your drush commands `en memcache`
+# Tom make `memcache` working `memcache` module should be enabled: `en memcache`.
 memcache: false
 
 # Path to Drupal DB dump (will be imported by `db.yml` playbook).
