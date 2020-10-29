@@ -41,16 +41,17 @@ drush_version: 10
 # Drush commands to run (will be run by `run-drush-commands.yml` playbook or if init_project is true).
 drush_commands:
   - 'cc drush'
-  - '-vy site:install minimal --account-pass=admin --site-name="Drupal Dockerizer"'
-  - 'theme:enable bartik claro -y'
-  - 'en datetime toolbar rest jsonapi views views_ui ban automated_cron action admin_toolbar -y'
-  - 'config-set system.theme default bartik -y'
-  - 'config-set system.theme admin claro -y'
+  - 'site:install minimal --account-pass=admin --site-name="Drupal Dockerizer"'
+  - 'theme:enable bartik claro'
+  - 'en datetime toolbar rest jsonapi views views_ui ban automated_cron action admin_toolbar'
+  - 'config-set system.theme default bartik'
+  - 'config-set system.theme admin claro'
   - 'cron'
 
 solr: false
 solr_core_name: drupal
 
+# For woking in new prtoject add to your drush commands `en memcache`
 memcache: false
 
 # Path to Drupal DB dump (will be imported by `db.yml` playbook).

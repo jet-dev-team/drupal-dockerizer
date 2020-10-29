@@ -1,10 +1,5 @@
 ---
 
-- name: Enable memcache.
-  delegate_to: "{{ compose_project_name }}-{{ phpversion }}"
-  become: no
-  raw: "drush en memcache -y"
-
 - name: Add memcache connection to settings.php
   blockinfile:
     marker: "// {mark} {{ compose_project_name }} SETUP MEMCACHE BLOCK"
