@@ -1,0 +1,13 @@
+---
+
+- name: Add Host name to /etc/hosts
+  blockinfile:
+    marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
+    path: /etc/hosts
+    block: |
+      192.168.{{ network_id }}.10 {{ domain_name }}
+      192.168.{{ network_id }}.11 {{ domain_name }}
+      {% if solr %}
+      192.168.{{ network_id }}.12 {{ domain_name }}
+      {% endif %}
+      192.168.{{ network_id }}.13 {{ domain_name }}

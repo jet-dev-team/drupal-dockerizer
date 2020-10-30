@@ -1,0 +1,38 @@
+---
+
+- hosts: server
+  become: yes
+
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - name: Include config override file, if it exists.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - config.yml
+
+  roles: []
+
+  tasks:
+    - name: Stop all Docker containers if docker-compose.yml.
+      shell: |
+        docker-compose down
+        chdir={{ docker_runtime_dir }}
+
+    - name: Kill all Docker containers if docker-compose.yml.
+      shell: |
+        docker-compose kill
+        chdir={{ docker_runtime_dir }}
+
+    - name: Ensure runtime removed.
+      file:
+        path: "{{ docker_runtime_dir }}"
+        state: absent
+
+    - name: Remove Host name from /etc/hosts
+      blockinfile:
+        marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
+        state: absent
+        path: /etc/hosts
+        block: |

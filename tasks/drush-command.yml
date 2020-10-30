@@ -1,0 +1,13 @@
+---
+
+- name: Add Drush as inventory host.
+  add_host:
+    name: "{{ compose_project_name }}-{{ phpversion }}"
+    ansible_connection: docker
+  changed_when: false
+
+- name: Run command in container.
+  delegate_to: "{{ compose_project_name }}-{{ phpversion }}"
+  become: no
+  raw: "drush -vy {{item}}"
+  loop: "{{ drush_commands }}"

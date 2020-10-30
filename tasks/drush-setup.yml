@@ -1,0 +1,19 @@
+---
+
+- name: Drush 8 Setup.
+  when: drush_version == 8
+  blockinfile:
+    marker: 'RUN a2enmod rewrite headers'
+    path: "{{ docker_runtime_dir }}/bin/{{ phpversion }}/Dockerfile"
+    block: |
+      RUN curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush/releases/download/8.4.1/drush.phar" && \
+        chmod +x /usr/local/bin/drush
+
+- name: Drush Launcher Setup.
+  when: drush_version > 8
+  blockinfile:
+    marker: 'RUN a2enmod rewrite headers'
+    path: "{{ docker_runtime_dir }}/bin/{{ phpversion }}/Dockerfile"
+    block: |
+      RUN curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar" && \
+        chmod +x /usr/local/bin/drush

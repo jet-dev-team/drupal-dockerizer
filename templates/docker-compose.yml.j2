@@ -1,0 +1,112 @@
+version: '3.7'
+
+services:
+{% if memcache %}
+  memcached:
+    image: memcached:1.6
+    restart: 'always'
+    container_name: '{{ compose_project_name }}-memcached'
+{% if advanced_networking %}
+    networks:
+      - {{ compose_project_name }}-network
+{% endif %}
+{% endif %}
+
+  webserver:
+    build:
+      context: ./bin/{{ phpversion }}
+    container_name: '{{ compose_project_name }}-{{ phpversion }}'
+    restart: 'always'
+    working_dir: /var/www/{{ drupal_web_root }}
+    depends_on:
+{% if memcache %}
+      - memcached
+{% endif %}
+      - database
+{% if not advanced_networking %}
+    ports:
+      - "{{ apache_port }}:80"
+      - "{{ apache_port_ssl }}:443"
+{% endif %}
+    links:
+      - database
+{% if memcache %}
+      - memcached
+{% endif %}
+{% if solr %}
+      - solr
+{% endif %}
+    volumes:
+      - {{ drupal_root_dir }}:/var/www/{{ ":cached" if docker_cached_volume }}
+      - {{ drupal_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini{{ ":cached" if docker_cached_volume }}
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
+    environment:
+      XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
+{% if advanced_networking %}
+    networks:
+      {{ compose_project_name }}-network:
+        ipv4_address: 192.168.{{ network_id }}.10
+{% endif %}
+
+  database:
+    build:
+      context: "./bin/{{ database }}"
+    container_name: '{{ compose_project_name }}-database'
+    command: --max_allowed_packet=1048576000 --skip-grant-tables
+    restart: 'always'
+    volumes:
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql{{ ":cached" if docker_cached_volume }}
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql{{ ":cached" if docker_cached_volume }}
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
+      MYSQL_DATABASE: {{ mysql_database }}
+      MYSQL_USER: {{ mysql_user }}
+      MYSQL_PASSWORD: {{ mysql_password }}
+{% if advanced_networking %}
+    networks:
+      {{ compose_project_name }}-network:
+        ipv4_address: 192.168.{{ network_id }}.13
+{% endif %}
+
+{% if solr %}
+  solr:
+    container_name: '{{ compose_project_name }}-solr'
+    restart: 'always'
+    build:
+      context: "./solr4"
+{% if advanced_networking %}
+    networks:
+      {{ compose_project_name }}-network:
+        ipv4_address: 192.168.{{ network_id }}.12
+{% endif %}
+{% endif %}
+
+{% if install_adminer %}
+  adminer:
+    image: adminer
+    container_name: '{{ compose_project_name }}-adminer'
+    restart: always
+{% if advanced_networking %}
+    networks:
+      {{ compose_project_name }}-network:
+        ipv4_address: 192.168.{{ network_id }}.11
+{% endif %}
+{% if not advanced_networking %}
+    ports:
+      - "{{ adminer_port }}:8080"
+{% endif %}
+    links:
+      - database
+{% endif %}
+
+{% if advanced_networking %}
+networks:
+  {{ compose_project_name }}-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.{{ network_id }}.0/28
+{% endif %}
