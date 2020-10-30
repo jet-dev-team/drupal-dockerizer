@@ -22,6 +22,14 @@
     mode: 0777
     owner: "{{ host_machine_user }}"
 
+- name: Set owner for Drupal sync dir.
+  file:
+    path: "{{drupal_root_dir}}/{{drupal_web_root}}/sites/default/sync"
+    state: directory
+    recurse: yes
+    mode: 0755
+    owner: "{{ host_machine_user }}"
+
 - name: Stop all Docker containers if docker-compose.yml has changed.
   command: >
     docker-compose stop
