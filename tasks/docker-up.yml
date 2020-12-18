@@ -19,7 +19,7 @@
     path: "{{ drupal_files_dir }}"
     state: directory
     recurse: yes
-    mode: 0777
+    mode: 0755
     owner: "{{ host_machine_user }}"
 
 - name: Set owner for Drupal sync dir.
