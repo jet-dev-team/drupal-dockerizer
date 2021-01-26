@@ -52,6 +52,9 @@ drush_commands:
   - 'cron'
 
 solr: false
+# Look at available version here https://hub.docker.com/_/solr
+solr_version: 4
+solr_configs_path: "{{ drupal_root_dir }}/docroot/modules/contrib/search_api_solr/solr-conf/4.x/"
 solr_core_name: drupal
 
 # Tom make `memcache` working `memcache` module should be enabled: `en memcache`.

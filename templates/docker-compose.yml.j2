@@ -79,7 +79,7 @@ services:
     container_name: '{{ compose_project_name }}-solr'
     restart: 'always'
     build:
-      context: "./solr4"
+      context: "./solr"
 {% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:

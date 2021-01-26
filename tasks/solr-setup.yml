@@ -1,29 +1,42 @@
 ---
 
 - name: Clone docker solr4 repository.
+  when: solr_version == 4
   git:
     repo: https://github.com/docker-solr/docker-solr4
-    dest: "{{ docker_runtime_dir }}/solr4"
+    dest: "{{ docker_runtime_dir }}/solr"
     version: master
     clone: yes
     update: yes
     force: yes
 
+- name: Create solr directory
+  when: solr_version != 4
+  file:
+    path: "{{ docker_runtime_dir }}/solr"
+    state: directory
+
+- name: Ensure Solr Dokcerfile is present.
+  when: solr_version != 4
+  template:
+    src: templates/solr.Dockerfile.j2
+    dest: "{{ docker_runtime_dir }}/solr/Dockerfile"
+    mode: '644'
+
 - name: Ensure Solr Core file is present.
   template:
-    src: templates/solr4.core.j2
-    dest: "{{ docker_runtime_dir }}/solr4/core.properties"
+    src: templates/solr.core.j2
+    dest: "{{ docker_runtime_dir }}/solr/core.properties"
     mode: '644'
 
 - name: Copy drupal solr config.
-  copy:
-    src: "{{ drupal_root_dir }}/docroot/modules/contrib/search_api_solr/solr-conf/4.x/"
-    dest: "{{ docker_runtime_dir }}/solr4/conf"
+  command: cp -r "{{ solr_configs_path }}"/. "{{ docker_runtime_dir }}/solr/conf"
 
 - name: Solr Setup.
+  when: solr_version == 4
   blockinfile:
     marker: 'RUN chown -R $SOLR_USER:$SOLR_GROUP /opt/docker-solr'
-    path: "{{ docker_runtime_dir }}/solr4/Dockerfile"
+    path: "{{ docker_runtime_dir }}/solr/Dockerfile"
     block: |
       RUN mkdir /opt/solr/example/solr/{{ solr_core_name }}
       COPY ./conf  /opt/solr/example/solr/{{ solr_core_name }}/conf
