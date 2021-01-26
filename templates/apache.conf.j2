@@ -1,4 +1,4 @@
-<VirtualHost *:443>
+<VirtualHost *:{{ 443 if ssl_enabled else 80 }}>
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/{{ drupal_web_root }}"
     ServerName {{ domain_name }}
