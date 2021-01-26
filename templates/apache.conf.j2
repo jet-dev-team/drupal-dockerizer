@@ -1,7 +1,14 @@
-<VirtualHost *:80>
+<VirtualHost *:443>
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/{{ drupal_web_root }}"
     ServerName {{ domain_name }}
+
+{% if ssl_enabled %}
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/cert.pem
+    SSLCertificateKeyFile /etc/apache2/pivate.key
+{% endif %}
+
 	<Directory "/var/www/{{ drupal_web_root }}/">
 		Options Indexes FollowSymLinks
         AllowOverride All
