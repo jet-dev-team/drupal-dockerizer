@@ -41,6 +41,10 @@ services:
       - {{ drupal_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini{{ ":cached" if docker_cached_volume }}
       - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
+{% if ssl_enabled %}
+      - {{ ssl_cert_path }}:/etc/apache2/cert.pem{{ ":cached" if docker_cached_volume }}
+      - {{ ssl_key_path }}:/etc/apache2/pivate.key{{ ":cached" if docker_cached_volume }}
+{% endif %}
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
     environment:
       XDEBUG_CONFIG: "{{ xdebug_enviroment }}"

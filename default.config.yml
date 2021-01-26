@@ -16,6 +16,9 @@ drupal_hash_salt: demo_site
 
 apache_port: 80
 apache_port_ssl: 443
+ssl_enabled: false
+ssl_cert_path: /var/data/ssl/fullchain.pem
+ssl_key_path: /var/data/ssl/privkey.pem
 
 # Look at available options here: https://github.com/jet-dev-team/docker-compose-lamp/tree/drupal/bin
 phpversion: php74
