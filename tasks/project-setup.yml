@@ -19,11 +19,3 @@
       arguments: "{{ item }} --no-update"
       working_dir: "{{ drupal_root_dir }}"
 
-- name: Update project.
-  become: no
-  composer:
-      command: update
-      ignore_platform_reqs: yes
-      working_dir: "{{ drupal_root_dir }}"
-      prefer_dist: yes
-
