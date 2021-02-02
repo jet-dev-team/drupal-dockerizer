@@ -82,7 +82,11 @@ services:
     build:
       context: "./bin/solr"
     volumes:
+{% if solr_version != 4%}
       - ./data/solr:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+{% else %}
+      - ./data/solr:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+{% endif %}
 {% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:
