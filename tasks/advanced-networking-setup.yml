@@ -7,8 +7,8 @@
     path: /etc/hosts
     block: |
       192.168.{{ network_id }}.10 {{ domain_name }}
-      192.168.{{ network_id }}.11 {{ domain_name }}
+      192.168.{{ network_id }}.11 adminer.{{ domain_name }}
       {% if solr %}
-      192.168.{{ network_id }}.12 {{ domain_name }}
+      192.168.{{ network_id }}.12 solr.{{ domain_name }}
       {% endif %}
-      192.168.{{ network_id }}.13 {{ domain_name }}
+      192.168.{{ network_id }}.13 db.{{ domain_name }}
