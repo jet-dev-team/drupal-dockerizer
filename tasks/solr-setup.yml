@@ -9,8 +9,6 @@
     clone: yes
     update: yes
     force: yes
-    owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
 
 - name: Solr 4 user configure.
   blockinfile:
