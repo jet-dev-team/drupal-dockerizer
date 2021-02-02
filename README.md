@@ -27,7 +27,7 @@ cp default.config.yml config.yml
 
 ```bash
 cd drupal-dockerizer
-ansible-playbook main.yml
+ansible-playbook main.yml --ask-become-pass
 ansible-playbook run-drush-commands.yml
 ```
 
@@ -155,7 +155,7 @@ drush_commands:
 
 ```bash
 cd drupal-dockerizer
-ansible-playbook reset.yml
+ansible-playbook reset.yml --ask-become-pass
 ```
 
 ### How to clear Docker cache?
