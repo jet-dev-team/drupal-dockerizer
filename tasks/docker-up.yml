@@ -1,6 +1,6 @@
 ---
 
 - name: Bring up the Docker containers.
-  command: >
-    docker-compose up --build -d --remove-orphans
-    chdir={{ docker_runtime_dir }}
+  command: docker-compose up --build -d --remove-orphans
+  args:
+    chdir: "{{ docker_runtime_dir }}"

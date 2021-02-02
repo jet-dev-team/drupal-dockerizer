@@ -15,7 +15,5 @@
 
   tasks:
 
-    - name: Stop all Docker containers.
-      command: docker-compose stop
-      args:
-        chdir: "{{ docker_runtime_dir }}"
+    - name: Include Docker up tasks
+      include: tasks/docker-up.yml
