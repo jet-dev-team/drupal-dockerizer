@@ -35,3 +35,20 @@
     - name: Include Memcache setup tasks
       when: memcache
       include: tasks/memcache-setup.yml
+
+    - name: Wait docker containers (MySQL) to up.
+      pause:
+        seconds: 30
+
+    - name: Check project tasks.
+      stat:
+        path: "{{drupal_root_dir}}/.drupal_dockerizer/tasks.yml"
+      register: project_tasks
+
+    - name: Include custom project tasks
+      include: "{{ item }}"
+      with_first_found:
+        - files:
+            - "{{drupal_root_dir}}/.drupal_dockerizer/tasks.yml"
+          skip: true
+      when: project_tasks
