@@ -3,7 +3,7 @@ version: '3.7'
 services:
 {% if memcache %}
   memcached:
-    image: memcached:1.6
+    image: memcached
     restart: 'always'
     container_name: '{{ compose_project_name }}-memcached'
 {% if advanced_networking %}
