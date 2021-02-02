@@ -9,6 +9,8 @@
     clone: yes
     update: yes
     force: yes
+    owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Solr 4 user configure.
   blockinfile:
@@ -30,12 +32,16 @@
     recurse: yes
     path: "{{ docker_runtime_dir }}/bin/solr"
     state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Create solr data directory
   file:
     recurse: yes
     path: "{{ docker_runtime_dir }}/data/solr"
     state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Ensure Solr Dokcerfile is present.
   when: solr_version != 4
@@ -43,13 +49,24 @@
     src: templates/solr.Dockerfile.j2
     dest: "{{ docker_runtime_dir }}/bin/solr/Dockerfile"
     mode: '644'
+    owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Ensure Solr Core file is present.
   template:
     src: templates/solr.core.j2
     dest: "{{ docker_runtime_dir }}/data/solr/core.properties"
     mode: '644'
+    owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Copy drupal solr config.
   command: cp -r "{{ solr_configs_path }}"/. "{{ docker_runtime_dir }}/data/solr/conf"
 
+- name: Check owner for conf dir.
+  file:
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data/solr/conf"
+    state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
