@@ -1,7 +1,6 @@
 ---
 
-- hosts: server
-  become: yes
+- hosts: all
 
   vars_files:
     - default.config.yml
@@ -26,11 +25,13 @@
         chdir={{ docker_runtime_dir }}
 
     - name: Ensure runtime removed.
+      become: true
       file:
         path: "{{ docker_runtime_dir }}"
         state: absent
 
     - name: Remove Host name from /etc/hosts
+      become: true
       blockinfile:
         marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
         state: absent

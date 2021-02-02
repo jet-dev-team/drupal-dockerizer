@@ -14,7 +14,7 @@ services:
 
   webserver:
     build:
-      context: ./bin/{{ phpversion }}
+      context: ./bin/php/
     container_name: '{{ compose_project_name }}-{{ phpversion }}'
     restart: 'always'
     working_dir: /var/www/{{ drupal_web_root }}
@@ -39,8 +39,7 @@ services:
     volumes:
       - {{ drupal_root_dir }}:/var/www/{{ ":cached" if docker_cached_volume }}
       - {{ drupal_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
-      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini{{ ":cached" if docker_cached_volume }}
-      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
+      - ${VHOSTS_DIR-./apache}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
 {% if ssl_enabled %}
       - {{ ssl_cert_path }}:/etc/apache2/cert.pem{{ ":cached" if docker_cached_volume }}
       - {{ ssl_key_path }}:/etc/apache2/pivate.key{{ ":cached" if docker_cached_volume }}
@@ -56,9 +55,11 @@ services:
 
   database:
     build:
-      context: "./bin/{{ database }}"
+      context: "./bin/database"
     container_name: '{{ compose_project_name }}-database'
+{% if database == "mysql" %}
     command: --max_allowed_packet=1048576000 --skip-grant-tables
+{% endif %}
     restart: 'always'
     volumes:
       - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql{{ ":cached" if docker_cached_volume }}
@@ -79,7 +80,9 @@ services:
     container_name: '{{ compose_project_name }}-solr'
     restart: 'always'
     build:
-      context: "./solr"
+      context: "./bin/solr"
+    volumes:
+      - ./data/solr:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
 {% if advanced_networking %}
     networks:
       {{ compose_project_name }}-network:

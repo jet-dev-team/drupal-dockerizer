@@ -15,6 +15,7 @@
 
   tasks:
 
-    - name: Run Drush commands.
-      when: drush_install
-      include: tasks/drush-command.yml
+    - name: Stop all Docker containers.
+      shell: |
+        docker-compose stop
+        chdir={{ docker_runtime_dir }}

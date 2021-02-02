@@ -1,6 +1,10 @@
 FROM solr:{{ solr_version }}
 
-# Case for solr version 5-7
-RUN mkdir -p /opt/solr/server/solr/{{ solr_core_name }}
-COPY conf /opt/solr/server/solr/{{ solr_core_name }}/conf
-COPY core.properties /opt/solr/server/solr/{{ solr_core_name }}/core.properties
+{% if user_uid != 0 %}
+USER root
+ARG USER_UID={{ user_uid }}
+ARG USER_GID=$USER_UID
+RUN chown -R $USER_UID:$USER_GID /opt/solr
+RUN groupmod --gid $USER_GID solr && usermod --uid $USER_UID --gid $USER_GID solr
+USER solr
+{% endif %}

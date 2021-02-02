@@ -23,27 +23,19 @@
 cd drupal-dockerizer
 cp default.config.yml config.yml
 ```
-
-### Start new local environment
-
-```bash
-cd drupal-dockerizer
-sudo ansible-playbook -vvv main.yml --connection=local --extra-vars=init_project=true
-```
-
-### Start local environment for existing project
+### Start local environment
 
 ```bash
 cd drupal-dockerizer
-sudo ansible-playbook -vvv main.yml --connection=local
-sudo ansible-playbook -vvv run-drush-commands.yml --connection=local
+ansible-playbook main.yml
+ansible-playbook run-drush-commands.yml
 ```
 
 ### Import database from dump
 
 ```bash
 cd drupal-dockerizer
-sudo ansible-playbook -vvv db.yml --connection=local
+sudo ansible-playbook db.yml
 ```
 
 ### Xdebug setup
@@ -107,7 +99,7 @@ Your `launch.json` should look like the next config:
         "max_depth": 2,
         "max_children": 100,
       }
-    
+
 ```
 
 How to use debugger with Drush commands?
@@ -162,14 +154,14 @@ drush_commands:
 ### How to reset everything and start from scratch?
 
 ```bash
-cd <project>/docker
-sudo ansible-playbook -vvv reset.yml --connection=local
+cd drupal-dockerizer
+ansible-playbook reset.yml
 ```
 
 ### How to clear Docker cache?
 
 ```bash
-docker system prune -a
+docker system prune -a -f
 ```
 
 ### How to enhance MacOS performance?

@@ -6,16 +6,23 @@
     state: directory
     recurse: yes
     mode: '1777'
-    owner: "{{ host_machine_user }}"
 
-- name: Copy file with owner and permission, using symbolic representation
+- name: Init settings.php
+  become: true
   copy:
     src: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/default.settings.php"
     dest: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
-    mode: '444'
-    owner: "{{ host_machine_user }}"
+    mode: '0444'
+
+- name:  Make public Drupal sync dir.
+  file:
+    path: "{{drupal_root_dir}}/{{drupal_web_root}}/{{drupal_config_sync_folder}}"
+    state: directory
+    recurse: yes
+    mode: 0755
 
 - name: Add DB connection to settings.php
+  become: true
   blockinfile:
     marker: "// {mark} {{ compose_project_name }} SETUP SETTINGS BLOCK."
     path: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
@@ -34,14 +41,16 @@
         ],
       ];
       $settings["file_temp_path"] = '/tmp';
-      $settings['config_sync_directory'] = 'sites/default/sync';
+      $settings['config_sync_directory'] = '{{drupal_config_sync_folder}}';
       $settings['trusted_host_patterns'] = [];
       {% if solr %}
       $config['search_api.server.solr']['backend_config']['connector_config']['host'] = '{{ compose_project_name }}-solr';
+      $config['search_api.server.solr']['backend_config']['connector_config']['core'] = '{{ solr_core_name }}';
       {% endif %}
       $settings["hash_salt"] = '{{ drupal_hash_salt }}';
 
 - name: Add custom settings to settings.php
+  become: true
   blockinfile:
     marker: "// {mark} {{ compose_project_name }} CUSTOM SETUP SETTINGS BLOCK."
     path: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"

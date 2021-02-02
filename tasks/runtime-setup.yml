@@ -1,0 +1,74 @@
+---
+
+- name:  Ensure that runtime dir exist.
+  file:
+    path: "{{ docker_runtime_dir }}"
+    state: directory
+    recurse: yes
+    mode: 0755
+
+- name: Ensure bin dir is present.
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin"
+    mode: 0755
+
+- name: Ensure log dir is present.
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/logs/apache2"
+    mode: 0755
+
+- name: Ensure data dir is present.
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data"
+    mode: 0755
+
+- name: Ensure apache dir is present.
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/apache"
+    mode: 0755
+
+- name: Ensure php dir is present.
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin/php"
+    mode: 0755
+
+- name: Ensure database dir is present.
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin/database"
+    mode: 0755
+
+- name: Ensure Apache2 config is present.
+  template:
+    src: templates/apache.conf.j2
+    dest: "{{ docker_runtime_dir }}/apache/default.conf"
+    mode: 0644
+
+- name: Ensure php Dockerfile is present.
+  template:
+    src: templates/php.Dockerfile.j2
+    dest: "{{ docker_runtime_dir }}/bin/php/Dockerfile"
+    mode: 0755
+
+- name: Ensure mysql Dockerfile is present.
+  template:
+    src: "templates/{{ database }}.Dockerfile.j2"
+    dest: "{{ docker_runtime_dir }}/bin/database/Dockerfile"
+    mode: 0755
+
+- name: Ensure Docker Compose file is present.
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ docker_runtime_dir }}/docker-compose.yml"
+    mode: 0755
