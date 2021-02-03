@@ -1,5 +1,5 @@
 {% if ssl_enabled %}
-<VirtualHost *:443>
+<VirtualHost *:{{apache_port_ssl}}>
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/{{ drupal_web_root }}"
     ServerName {{ domain_name }}
@@ -12,8 +12,8 @@
         Require all granted
 	</Directory>
 </VirtualHost>
-{% endif %}
-<VirtualHost *:80>
+{% else %}
+<VirtualHost *:{{apache_port}}>
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/{{ drupal_web_root }}"
     ServerName {{ domain_name }}
@@ -24,3 +24,4 @@
         Require all granted
 	</Directory>
 </VirtualHost>
+{% endif %}
