@@ -11,6 +11,7 @@
     force: yes
 
 - name: Solr 4 user configure.
+  when: solr_version == 4
   blockinfile:
     path: "{{ docker_runtime_dir }}/bin/solr/Dockerfile"
     block: |
