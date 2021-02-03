@@ -3,7 +3,9 @@
     ServerAdmin webmaster@localhost
     DocumentRoot "/var/www/{{ drupal_web_root }}"
     ServerName {{ domain_name }}
-
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/cert.pem
+    SSLCertificateKeyFile /etc/apache2/pivate.key
 	<Directory "/var/www/{{ drupal_web_root }}/">
 		Options Indexes FollowSymLinks
         AllowOverride All
