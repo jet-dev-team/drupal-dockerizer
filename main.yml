@@ -46,12 +46,16 @@
       include: tasks/docker-up.yml
 
     - name: Include Memcache setup tasks
-      when: memcache
       include: tasks/memcache-setup.yml
+      when: memcache
 
     - name: Wait docker containers (MySQL) to up.
       pause:
         seconds: 30
+
+    - name: Include import-database tasks.
+      include: tasks/import-database.yml
+      when: import_database
 
     - name: Check project tasks.
       stat:

@@ -59,11 +59,13 @@ memcache: false
 # Path to Drupal DB dump (will be imported by `db.yml` playbook).
 db_dump_path: /var/data/db/db.sql
 
+# Availible options: mysql, mariadb
 database: mysql
 mysql_root_password: root
 mysql_user: docker
 mysql_password: docker
 mysql_database: docker
+import_database: false
 
 install_adminer: false
 adminer_port: 8080
