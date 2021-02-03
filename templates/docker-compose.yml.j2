@@ -18,6 +18,8 @@ services:
     container_name: '{{ compose_project_name }}-{{ phpversion }}'
     restart: 'always'
     working_dir: /var/www/{{ drupal_web_root }}
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
     depends_on:
 {% if memcache %}
       - memcached
