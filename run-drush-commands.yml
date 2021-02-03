@@ -16,5 +16,5 @@
   tasks:
 
     - name: Run Drush commands.
-      when: drush_install
       include: tasks/drush-command.yml
+      when: drush_install

@@ -69,3 +69,7 @@
             - "{{drupal_root_dir}}/.drupal_dockerizer/post-tasks.yml"
           skip: true
       when: post_tasks
+
+    - name: Run Drush commands.
+      include: tasks/drush-command.yml
+      when: drush_install and run_drush_commands

@@ -47,6 +47,9 @@ drush_commands:
   - 'config-set system.theme admin claro'
   - 'cron'
 
+# If set to true lanch drush commands in php-apache conteiner after up conteiner.
+run_drush_commands: false
+
 solr: false
 # Look at available version here https://hub.docker.com/_/solr
 solr_version: 4
@@ -65,6 +68,7 @@ mysql_root_password: root
 mysql_user: docker
 mysql_password: docker
 mysql_database: docker
+# If set to true import database after up conteiners.
 import_database: false
 
 install_adminer: false
