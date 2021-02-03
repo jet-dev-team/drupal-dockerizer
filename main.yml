@@ -18,6 +18,19 @@
     - name: Include lamp setup tasks
       include: tasks/runtime-setup.yml
 
+    - name: Check project tasks.
+      stat:
+        path: "{{drupal_root_dir}}/.drupal_dockerizer/pre-tasks.yml"
+      register: pre_tasks
+
+    - name: Include custom project pre-tasks
+      include: "{{ item }}"
+      with_first_found:
+        - files:
+            - "{{drupal_root_dir}}/.drupal_dockerizer/pre-tasks.yml"
+          skip: true
+      when: pre_tasks
+
     - name: Include solr setup tasks.
       when: solr
       include: tasks/solr-setup.yml
@@ -42,13 +55,13 @@
 
     - name: Check project tasks.
       stat:
-        path: "{{drupal_root_dir}}/.drupal_dockerizer/tasks.yml"
-      register: project_tasks
+        path: "{{drupal_root_dir}}/.drupal_dockerizer/post-tasks.yml"
+      register: post_tasks
 
-    - name: Include custom project tasks
+    - name: Include custom project post-tasks
       include: "{{ item }}"
       with_first_found:
         - files:
-            - "{{drupal_root_dir}}/.drupal_dockerizer/tasks.yml"
+            - "{{drupal_root_dir}}/.drupal_dockerizer/post-tasks.yml"
           skip: true
-      when: project_tasks
+      when: post_tasks
