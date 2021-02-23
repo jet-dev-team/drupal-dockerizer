@@ -25,8 +25,9 @@ drupal_root_dir: /var/data/drupal
 drupal_web_root: web
 drupal_files_dir: /var/data/drupal/web/sites/default/files
 ```
-Remember: other options will settled by default from `default.config.yml` file
-For more options see CONFIG.md
+Remember: other options will setted by default from `default.config.yml` file.
+
+For more options [see](CONFIG.md)
 
 For up your drupal project in docker containers run:
 
