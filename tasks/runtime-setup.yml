@@ -10,6 +10,7 @@
     recurse: yes
 
 - name: Ensure bin dir is present.
+  become: true
   file:
     state: directory
     recurse: yes
@@ -18,6 +19,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure log dir is present.
+  become: true
   file:
     state: directory
     recurse: yes
@@ -26,6 +28,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure data dir is present.
+  become: true
   file:
     state: directory
     recurse: yes
@@ -34,6 +37,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure apache dir is present.
+  become: true
   file:
     state: directory
     recurse: yes
@@ -42,6 +46,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure php dir is present.
+  become: true
   file:
     state: directory
     recurse: yes
@@ -50,6 +55,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure database dir is present.
+  become: true
   file:
     state: directory
     recurse: yes
@@ -58,6 +64,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure Apache2 config is present.
+  become: true
   template:
     src: templates/apache.conf.j2
     dest: "{{ docker_runtime_dir }}/apache/default.conf"
@@ -66,6 +73,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure php Dockerfile is present.
+  become: true
   template:
     src: templates/php.Dockerfile.j2
     dest: "{{ docker_runtime_dir }}/bin/php/Dockerfile"
@@ -73,6 +81,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure mysql Dockerfile is present.
+  become: true
   template:
     src: "templates/{{ database }}.Dockerfile.j2"
     dest: "{{ docker_runtime_dir }}/bin/database/Dockerfile"
@@ -80,6 +89,7 @@
     group: "{{user_uid|int}}"
 
 - name: Ensure Docker Compose file is present.
+  become: true
   template:
     src: templates/docker-compose.yml.j2
     dest: "{{ docker_runtime_dir }}/docker-compose.yml"
