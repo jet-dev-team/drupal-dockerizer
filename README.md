@@ -10,33 +10,51 @@
 
 ## Quickstart
 
-### Prepare project structure
+You can use ansible-pull tool from standard package ansible for quick setup your project.
 
-- `db`: create this directory and download database dump here if exists.
-- `code`: clone your project files into this directory.
-- `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
-- `files`: create the directory and pull Drupal assets here
+For that create config yml file in any place your need(in drupal project directory or external folder). Ensure that all needed config options is setup.
 
-### Prepare your config for Drupal Dockerizer
+Minimum required options:
+```yaml
+---
 
-```bash
-cd drupal-dockerizer
-cp default.config.yml config.yml
+compose_project_name: drupal-project
+docker_runtime_dir: drupal-project
+user_uid: 1000
+drupal_root_dir: /var/data/drupal
+drupal_web_root: web
+drupal_files_dir: /var/data/drupal/web/sites/default/files
 ```
-### Start local environment
+Remember: other options will settled by default from `default.config.yml` file
 
-```bash
-cd drupal-dockerizer
-ansible-playbook main.yml --ask-become-pass
-ansible-playbook run-drush-commands.yml
+For up your drupal project in docker containers run:
+
+```
+ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git main.yml --ask-become-pass
 ```
 
-### Import database from dump
-
-```bash
-cd drupal-dockerizer
-sudo ansible-playbook db.yml
+After done you should have drupal project in docker containers with empty database.
+Check containers status by run `docker ps` command.
+If you use database dump you can set in config  option `db_dump_path` to absolute path to you database dump. For import database run:
 ```
+ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git db.yml
+```
+
+For stop or up containers just replace `db.yml` in command to `stop.yml` or `up.yml`
+
+For fully remove all projects data you can run:
+```
+ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git reset.yml --ask-become-pass
+```
+This command remove all projects containers, volumes with data in database and runtime directory.
+
+### Usage ansible-pull
+
+By default pulling data by ansible-pull placed in `~/.ansible/pull/<hostname>` directory. You can change it by add to ansible-pull command destination option `-d <DEST>` or `--directory <DEST>`.
+
+You can anchor version drupal-dockerizer by add to ansible-pull command option `-C <TAG_NAME>` or `--checkout <TAG_NAME>`
+
+For more information about ansible-pull see [documentations](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html).
 
 ### Xdebug setup
 
@@ -147,6 +165,35 @@ drush_commands:
   - '-v sapi-r'
   - '-v sapi-i'
   - ...
+```
+## Development drupal-dockerizer
+
+### Prepare project structure
+
+- `db`: create this directory and download database dump here if exists.
+- `code`: clone your project files into this directory.
+- `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
+- `files`: create the directory and pull Drupal assets here
+
+### Prepare your config for Drupal Dockerizer
+
+```bash
+cd drupal-dockerizer
+cp default.config.yml config.yml
+```
+### Start local environment
+
+```bash
+cd drupal-dockerizer
+ansible-playbook main.yml --ask-become-pass
+ansible-playbook run-drush-commands.yml
+```
+
+### Import database from dump
+
+```bash
+cd drupal-dockerizer
+ansible-playbook db.yml
 ```
 
 ## FAQ
