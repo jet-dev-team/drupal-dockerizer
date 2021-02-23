@@ -7,7 +7,6 @@
     state: directory
 
 - name: Ensure bin dir is present.
-  become: true
   file:
     state: directory
     path: "{{ docker_runtime_dir }}/bin"
