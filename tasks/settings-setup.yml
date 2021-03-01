@@ -6,7 +6,7 @@
     path: '{{ drupal_files_dir }}'
     state: directory
     recurse: yes
-    mode: '1777'
+    mode: 1777
     owner: "{{user_uid|int}}"
     group: "{{user_uid|int}}"
 
@@ -15,7 +15,7 @@
   copy:
     src: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/default.settings.php"
     dest: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
-    mode: '0444'
+    mode: 0444
     owner: "{{user_uid|int}}"
     group: "{{user_uid|int}}"
 
