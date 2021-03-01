@@ -8,6 +8,7 @@
     recurse: yes
     mode: '1777'
     owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Init settings.php
   become: true
@@ -16,6 +17,7 @@
     dest: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
     mode: '0444'
     owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name:  Make public Drupal sync dir.
   become: true
@@ -25,6 +27,7 @@
     recurse: yes
     mode: 0755
     owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Add DB connection to settings.php
   become: true
