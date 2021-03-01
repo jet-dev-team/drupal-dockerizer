@@ -7,11 +7,13 @@
     owner: "{{user_uid|int}}"
     group: "{{user_uid|int}}"
     state: directory
+    recurse: yes
 
 - name: Ensure bin dir is present.
   become: true
   file:
     state: directory
+    recurse: yes
     path: "{{ docker_runtime_dir }}/bin"
     owner: "{{user_uid|int}}"
     group: "{{user_uid|int}}"
@@ -29,6 +31,7 @@
   become: true
   file:
     state: directory
+    recurse: yes
     path: "{{ docker_runtime_dir }}/data"
     owner: "{{user_uid|int}}"
     group: "{{user_uid|int}}"
@@ -37,6 +40,7 @@
   become: true
   file:
     state: directory
+    recurse: yes
     path: "{{ docker_runtime_dir }}/apache"
     owner: "{{user_uid|int}}"
     group: "{{user_uid|int}}"
