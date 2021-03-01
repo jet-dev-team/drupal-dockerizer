@@ -1,6 +1,7 @@
 ---
 
 - name:  Ensure that runtime dir exist.
+  become: true
   file:
     path: "{{ docker_runtime_dir }}"
     owner: "{{user_uid|int}}"
