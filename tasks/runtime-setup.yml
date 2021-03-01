@@ -13,7 +13,7 @@
     owner: "{{user_uid|int}}"
 
 - name: Ensure log dir is present.
-  become: yes
+  become: true
   file:
     state: directory
     recurse: yes
