@@ -4,6 +4,7 @@
   file:
     path: "{{ docker_runtime_dir }}"
     owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
     state: directory
 
 - name: Ensure bin dir is present.
@@ -12,6 +13,7 @@
     state: directory
     path: "{{ docker_runtime_dir }}/bin"
     owner: "{{user_uid|int}}"
+    group: "{{user_uid|int}}"
 
 - name: Ensure log dir is present.
   become: true
