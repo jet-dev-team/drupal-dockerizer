@@ -15,12 +15,14 @@
   roles: []
 
   tasks:
-    - name: Stop all Docker containers if docker-compose.yml.
+    - name: Stop all Docker containers.
+      ignore_errors: yes
       shell: |
         docker-compose down
         chdir={{ docker_runtime_dir }}
 
-    - name: Kill all Docker containers if docker-compose.yml.
+    - name: Kill all Docker containers.
+      ignore_errors: yes
       shell: |
         docker-compose kill
         chdir={{ docker_runtime_dir }}
