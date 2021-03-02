@@ -26,11 +26,13 @@
         chdir={{ docker_runtime_dir }}
 
     - name: Ensure runtime removed.
+      ignore_errors: yes
       file:
         path: "{{ docker_runtime_dir }}"
         state: absent
 
     - name: Remove Host name from /etc/hosts
+      ignore_errors: yes
       blockinfile:
         marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
         state: absent
