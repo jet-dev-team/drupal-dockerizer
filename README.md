@@ -2,11 +2,11 @@
 
 ## Requirements
 
-- Python >= 3.5
-- Docker
-- Docker Compose
-- Ansible >= 2.8
-- Git
+- python [instruction](https://www.python.org/downloads/)
+- git [instruction for install](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- ansible [instruction for install](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- docker [instruction for install](https://docs.docker.com/get-docker/)
+- docker-compose [instruction for install](https://docs.docker.com/compose/install/)
 
 ## Quickstart
 
