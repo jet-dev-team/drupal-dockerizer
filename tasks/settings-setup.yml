@@ -6,18 +6,18 @@
     path: '{{ drupal_files_dir }}'
     state: directory
     recurse: yes
-    mode: 1777
+    mode: "u=rwx,og=rx"
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Init settings.php
   become: true
   copy:
     src: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/default.settings.php"
     dest: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
-    mode: 0444
+    mode: "ugo=r"
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name:  Make public Drupal sync dir.
   become: true
@@ -25,9 +25,9 @@
     path: "{{drupal_root_dir}}/{{drupal_web_root}}/{{drupal_config_sync_folder}}"
     state: directory
     recurse: yes
-    mode: 0755
+    mode: "u=rwx,og=rx"
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Add DB connection to settings.php
   become: true

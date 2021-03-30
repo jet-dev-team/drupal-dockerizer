@@ -18,7 +18,7 @@
       {% if user_uid != 0 %}
       USER root
       ARG USER_UID={{ user_uid }}
-      ARG USER_GID=$USER_UID
+      ARG USER_GID={{ user_gid }}
       RUN chown -R $USER_UID:$USER_GID /opt/solr
       RUN rm -rf /opt/solr/example/solr/collection1/
       RUN groupmod --gid $USER_GID solr && usermod --uid $USER_UID --gid $USER_GID solr
@@ -32,7 +32,7 @@
     path: "{{ docker_runtime_dir }}/bin/solr"
     state: directory
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Create solr data directory
   file:
@@ -40,7 +40,7 @@
     path: "{{ docker_runtime_dir }}/data/solr"
     state: directory
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Ensure Solr Dokcerfile is present.
   when: solr_version != 4
@@ -49,7 +49,7 @@
     dest: "{{ docker_runtime_dir }}/bin/solr/Dockerfile"
     mode: '644'
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Ensure Solr Core file is present.
   template:
@@ -57,7 +57,7 @@
     dest: "{{ docker_runtime_dir }}/data/solr/core.properties"
     mode: '644'
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Copy drupal solr config.
   command: cp -r "{{ solr_configs_path }}"/. "{{ docker_runtime_dir }}/data/solr/conf"
@@ -68,4 +68,4 @@
     path: "{{ docker_runtime_dir }}/data/solr/conf"
     state: directory
     owner: "{{user_uid|int}}"
-    group: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"

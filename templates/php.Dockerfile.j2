@@ -5,7 +5,7 @@ USER root
 {% else %}
 USER root
 ARG USER_UID={{ user_uid }}
-ARG USER_GID=$USER_UID
+ARG USER_GID={{ user_gid }}
 RUN groupmod --gid $USER_GID dockerizer && usermod --uid $USER_UID --gid $USER_GID dockerizer
 USER dockerizer
 {% endif %}
