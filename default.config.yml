@@ -40,11 +40,7 @@ drush_version: 10
 # Drush commands to run (will be run by `run-drush-commands.yml` playbook or if init_project is true).
 drush_commands:
   - 'cc drush'
-  - 'site:install minimal --account-pass=admin --site-name="Drupal Dockerizer"'
-  - 'theme:enable bartik claro'
-  - 'en datetime toolbar rest jsonapi views views_ui ban automated_cron action admin_toolbar'
-  - 'config-set system.theme default bartik'
-  - 'config-set system.theme admin claro'
+  - 'si --account-pass=admin --site-name="Drupal Dockerizer"'
   - 'cron'
 
 # If set to true lanch drush commands in php-apache conteiner after up conteiner.
