@@ -8,6 +8,7 @@
 - docker [instruction for install](https://docs.docker.com/get-docker/)
 - docker-compose [instruction for install](https://docs.docker.com/compose/install/)
 
+After install docker need add your user to docker group and logout/login to you system, see [instruction](https://docs.docker.com/engine/install/linux-postinstall/)
 ## Quickstart
 
 You can use ansible-pull tool from standard package ansible for quick setup your project.
