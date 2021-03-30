@@ -1,4 +1,4 @@
-# Availble options(vars) for durpal-dockerizer config
+# Availble options(vars) for drupal-dockerizer config
 
 | Option | Description | Example |
 | ------------ | ------------ | ------------ |
