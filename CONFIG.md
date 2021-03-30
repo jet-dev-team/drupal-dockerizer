@@ -6,6 +6,7 @@
 | docker_runtime_dir | Name for drupal-dockerizer runtime directory. You can up many projects from drupal-dokerizer directory. Ensure that all you project have different name | drupal-project-runtime |
 | docker_cached_volume | Set option :cached for docker volume. [more](http://docs.docker.oeynet.com/docker-for-mac/osxfs-caching/). | false |
 | user_uid | uid your user in system. Run `id -u` for see you uid | 1000 |
+| user_gid | uid your user in system. Run `id -g` for see you uid | 1000 |
 | drupal_root_dir | Absоlute path to your drupal-project directory. | /var/data/drupal |
 | drupal_web_root | Name directory where placed index.php file indside drupal project directory | web |
 | drupal_files_dir | Absolute path to your drupal files directory | /var/data/drupal_files |

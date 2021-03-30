@@ -21,6 +21,7 @@ Minimum required options:
 compose_project_name: drupal-project
 docker_runtime_dir: drupal-project
 user_uid: 1000
+user_gid: 1000
 drupal_root_dir: /var/data/drupal
 drupal_web_root: web
 drupal_files_dir: /var/data/drupal/web/sites/default/files
