@@ -9,6 +9,7 @@
 - docker-compose [instruction for install](https://docs.docker.com/compose/install/)
 
 After install docker need add your user to docker group and logout/login to you system, see [instruction](https://docs.docker.com/engine/install/linux-postinstall/)
+
 ## Quickstart
 
 You can use ansible-pull tool from standard package ansible for quick setup your project.
@@ -16,6 +17,7 @@ You can use ansible-pull tool from standard package ansible for quick setup your
 For that create config yml file in any place your need(in drupal project directory or external folder). Ensure that all needed config options is setup.
 
 Minimum required options:
+
 ```yaml
 ---
 
@@ -27,29 +29,33 @@ drupal_root_dir: /var/data/drupal
 drupal_web_root: web
 drupal_files_dir: /var/data/drupal/web/sites/default/files
 ```
+
 Remember: other options will setted by default from `default.config.yml` file.
 
 For more options [see](CONFIG.md)
 
 For up your drupal project in docker containers run:
 
-```
+```bash
 ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git main.yml --ask-become-pass
 ```
 
 After done you should have drupal project in docker containers with empty database.
 Check containers status by run `docker ps` command.
 If you use database dump you can set in config  option `db_dump_path` to absolute path to you database dump. For import database run:
-```
+
+```bash
 ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git db.yml
 ```
 
 For stop or up containers just replace `db.yml` in command to `stop.yml` or `up.yml`
 
-For fully remove all projects data you can run:
-```
+For fully remove all projects data and down docker conteiners you can run:
+
+```bash
 ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git reset.yml --ask-become-pass
 ```
+
 This command remove all projects containers, volumes with data in database and runtime directory.
 
 ### Usage ansible-pull
@@ -121,7 +127,7 @@ Your `launch.json` should look like the next config:
         "max_depth": 2,
         "max_children": 100,
       }
-
+    }
 ```
 
 How to use debugger with Drush commands?
@@ -170,6 +176,7 @@ drush_commands:
   - '-v sapi-i'
   - ...
 ```
+
 ## Development drupal-dockerizer
 
 ### Prepare project structure
@@ -185,6 +192,7 @@ drush_commands:
 cd drupal-dockerizer
 cp default.config.yml config.yml
 ```
+
 ### Start local environment
 
 ```bash
