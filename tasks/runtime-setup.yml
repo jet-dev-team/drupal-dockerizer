@@ -1,0 +1,96 @@
+---
+
+- name:  Ensure that runtime dir exist.
+  become: true
+  file:
+    path: "{{ docker_runtime_dir }}"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+    state: directory
+    recurse: yes
+
+- name: Ensure bin dir is present.
+  become: true
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure log dir is present.
+  become: true
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/logs/apache2"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure data dir is present.
+  become: true
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure apache dir is present.
+  become: true
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/apache"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure php dir is present.
+  become: true
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin/php"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure database dir is present.
+  become: true
+  file:
+    state: directory
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin/database"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure Apache2 config is present.
+  become: true
+  template:
+    src: templates/apache.conf.j2
+    dest: "{{ docker_runtime_dir }}/apache/default.conf"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure php Dockerfile is present.
+  become: true
+  template:
+    src: templates/php.Dockerfile.j2
+    dest: "{{ docker_runtime_dir }}/bin/php/Dockerfile"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure mysql Dockerfile is present.
+  become: true
+  template:
+    src: "templates/{{ database }}.Dockerfile.j2"
+    dest: "{{ docker_runtime_dir }}/bin/database/Dockerfile"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure Docker Compose file is present.
+  become: true
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ docker_runtime_dir }}/docker-compose.yml"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"

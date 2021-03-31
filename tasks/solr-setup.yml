@@ -1,31 +1,71 @@
 ---
 
 - name: Clone docker solr4 repository.
+  when: solr_version == 4
   git:
     repo: https://github.com/docker-solr/docker-solr4
-    dest: "{{ docker_runtime_dir }}/solr4"
+    dest: "{{ docker_runtime_dir }}/bin/solr"
     version: master
     clone: yes
     update: yes
     force: yes
 
+- name: Solr 4 user configure.
+  when: solr_version == 4
+  blockinfile:
+    path: "{{ docker_runtime_dir }}/bin/solr/Dockerfile"
+    block: |
+      {% if user_uid != 0 %}
+      USER root
+      ARG USER_UID={{ user_uid }}
+      ARG USER_GID={{ user_gid }}
+      RUN chown -R $USER_UID:$USER_GID /opt/solr
+      RUN rm -rf /opt/solr/example/solr/collection1/
+      RUN groupmod --gid $USER_GID solr && usermod --uid $USER_UID --gid $USER_GID solr
+      USER solr
+      {% endif %}
+
+- name: Create solr directory
+  when: solr_version != 4
+  file:
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/bin/solr"
+    state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Create solr data directory
+  file:
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data/solr"
+    state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Ensure Solr Dokcerfile is present.
+  when: solr_version != 4
+  template:
+    src: templates/solr.Dockerfile.j2
+    dest: "{{ docker_runtime_dir }}/bin/solr/Dockerfile"
+    mode: '644'
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
 - name: Ensure Solr Core file is present.
   template:
-    src: templates/solr4.core.j2
-    dest: "{{ docker_runtime_dir }}/solr4/core.properties"
+    src: templates/solr.core.j2
+    dest: "{{ docker_runtime_dir }}/data/solr/core.properties"
     mode: '644'
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
 
 - name: Copy drupal solr config.
-  copy:
-    src: "{{ drupal_root_dir }}/docroot/modules/contrib/search_api_solr/solr-conf/4.x/"
-    dest: "{{ docker_runtime_dir }}/solr4/conf"
+  command: cp -r "{{ solr_configs_path }}"/. "{{ docker_runtime_dir }}/data/solr/conf"
 
-- name: Solr Setup.
-  blockinfile:
-    marker: 'RUN chown -R $SOLR_USER:$SOLR_GROUP /opt/docker-solr'
-    path: "{{ docker_runtime_dir }}/solr4/Dockerfile"
-    block: |
-      RUN mkdir /opt/solr/example/solr/{{ solr_core_name }}
-      COPY ./conf  /opt/solr/example/solr/{{ solr_core_name }}/conf
-      COPY ./core.properties /opt/solr/example/solr/{{ solr_core_name }}/core.properties
-      RUN chown -R $SOLR_USER:$SOLR_GROUP /opt/solr/example/solr/{{ solr_core_name }}
+- name: Check owner for conf dir.
+  file:
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data/solr/conf"
+    state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"

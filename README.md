@@ -2,49 +2,66 @@
 
 ## Requirements
 
-- Python >= 3.5
-- Docker
-- Docker Compose
-- Ansible >= 2.8
-- Git
+- python [instruction](https://www.python.org/downloads/)
+- git [instruction for install](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- ansible [instruction for install](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- docker [instruction for install](https://docs.docker.com/get-docker/)
+- docker-compose [instruction for install](https://docs.docker.com/compose/install/)
+
+After install docker need add your user to docker group and logout/login to you system, see [instruction](https://docs.docker.com/engine/install/linux-postinstall/)
 
 ## Quickstart
 
-### Prepare project structure
+You can use ansible-pull tool from standard package ansible for quick setup your project.
 
-- `db`: create this directory and download database dump here if exists.
-- `code`: clone your project files into this directory.
-- `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
-- `files`: create the directory and pull Drupal assets here
+For that create config yml file in any place your need(in drupal project directory or external folder). Ensure that all needed config options is setup.
 
-### Prepare your config for Drupal Dockerizer
+Minimum required options:
 
-```bash
-cd drupal-dockerizer
-cp default.config.yml config.yml
+```yaml
+---
+
+compose_project_name: drupal-project
+user_uid: 1000
+user_gid: 1000
+drupal_root_dir: /var/data/drupal
 ```
 
-### Start new local environment
+Remember: other options will setted by default from `default.config.yml` file.
+
+For more options [see](CONFIG.md)
+
+For up your drupal project in docker containers run:
 
 ```bash
-cd drupal-dockerizer
-sudo ansible-playbook -vvv main.yml --connection=local --extra-vars=init_project=true
+ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git main.yml --ask-become-pass
 ```
 
-### Start local environment for existing project
+After done you should have drupal project in docker containers with empty database.
+Check containers status by run `docker ps` command.
+If you use database dump you can set in config  option `db_dump_path` to absolute path to you database dump. For import database run:
 
 ```bash
-cd drupal-dockerizer
-sudo ansible-playbook -vvv main.yml --connection=local
-sudo ansible-playbook -vvv run-drush-commands.yml --connection=local
+ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git db.yml
 ```
 
-### Import database from dump
+For stop or up containers just replace `db.yml` in command to `stop.yml` or `up.yml`
+
+For fully remove all projects data and down docker conteiners you can run:
 
 ```bash
-cd drupal-dockerizer
-sudo ansible-playbook -vvv db.yml --connection=local
+ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git reset.yml --ask-become-pass
 ```
+
+This command remove all projects containers, volumes with data in database and runtime directory.
+
+### Usage ansible-pull
+
+By default pulling data by ansible-pull placed in `~/.ansible/pull/<hostname>` directory. You can change it by add to ansible-pull command destination option `-d <DEST>` or `--directory <DEST>`.
+
+You can anchor version drupal-dockerizer by add to ansible-pull command option `-C <TAG_NAME>` or `--checkout <TAG_NAME>`
+
+For more information about ansible-pull see [documentations](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html).
 
 ### Xdebug setup
 
@@ -107,7 +124,7 @@ Your `launch.json` should look like the next config:
         "max_depth": 2,
         "max_children": 100,
       }
-    
+    }
 ```
 
 How to use debugger with Drush commands?
@@ -157,19 +174,50 @@ drush_commands:
   - ...
 ```
 
+## Development drupal-dockerizer
+
+### Prepare project structure
+
+- `db`: create this directory and download database dump here if exists.
+- `code`: clone your project files into this directory.
+- `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
+- `files`: create the directory and pull Drupal assets here
+
+### Prepare your config for Drupal Dockerizer
+
+```bash
+cd drupal-dockerizer
+cp default.config.yml config.yml
+```
+
+### Start local environment
+
+```bash
+cd drupal-dockerizer
+ansible-playbook main.yml --ask-become-pass
+ansible-playbook run-drush-commands.yml
+```
+
+### Import database from dump
+
+```bash
+cd drupal-dockerizer
+ansible-playbook db.yml
+```
+
 ## FAQ
 
 ### How to reset everything and start from scratch?
 
 ```bash
-cd <project>/docker
-sudo ansible-playbook -vvv reset.yml --connection=local
+cd drupal-dockerizer
+ansible-playbook reset.yml --ask-become-pass
 ```
 
 ### How to clear Docker cache?
 
 ```bash
-docker system prune -a
+docker system prune -a -f
 ```
 
 ### How to enhance MacOS performance?

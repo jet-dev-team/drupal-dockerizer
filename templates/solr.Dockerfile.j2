@@ -1,0 +1,10 @@
+FROM solr:{{ solr_version }}
+
+{% if user_uid != 0 %}
+USER root
+ARG USER_UID={{ user_uid }}
+ARG USER_GID={{ user_gid }}
+RUN chown -R $USER_UID:$USER_GID /opt/solr
+RUN groupmod --gid $USER_GID solr && usermod --uid $USER_UID --gid $USER_GID solr
+USER solr
+{% endif %}

@@ -1,18 +1,21 @@
 ---
 
 compose_project_name: my-project
-docker_runtime_dir: my-project
+docker_runtime_dir: "{{compose_project_name}}"
 docker_cached_volume: true
 
-host_machine_user: myusername
+user_uid: 1000
+user_gid: 1000
 
 # Absolute Path to Drupal dir (`vendor` forlder should be there).
 drupal_root_dir: /var/data/drupal
 # Name of "web" folder inside `drupal_root_dir`.
 drupal_web_root: web
 # Absolute Path to Drupal files dir.
-drupal_files_dir: /var/data/drupal_files
+drupal_files_dir: "{{drupal_root_dir}}/{{drupal_web_root}}/sites/default/files"
 drupal_hash_salt: demo_site
+# Absolute Path to Drupal config sync dir.
+drupal_config_sync_folder: sites/default/sync
 
 apache_port: 80
 apache_port_ssl: 443
@@ -20,8 +23,8 @@ ssl_enabled: false
 ssl_cert_path: /var/data/ssl/fullchain.pem
 ssl_key_path: /var/data/ssl/privkey.pem
 
-# Look at available options here: https://github.com/jet-dev-team/docker-compose-lamp/tree/drupal/bin
-phpversion: php74
+# Look at available options here: https://hub.docker.com/r/jetdevteam/drupal-php-apache/tags?page=1&ordering=last_updated
+phpversion: 7.4-develop
 
 # Enviroment variable for php xdebug extensions
 xdebug_enviroment: remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.105.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
@@ -31,27 +34,23 @@ advanced_networking: false
 network_id: 105
 domain_name: drupal.devel
 
-init_project: false
-composer_project: drupal/recommended-project
-comoser_extras:
-  - drush/drush
-  - drupal/admin_toolbar
-
 drush_install: true
 # Availible options: 8, 9, 10
-drush_version: 10
+drush_version: 8
 
 # Drush commands to run (will be run by `run-drush-commands.yml` playbook or if init_project is true).
 drush_commands:
   - 'cc drush'
-  - 'site:install minimal --account-pass=admin --site-name="Drupal Dockerizer"'
-  - 'theme:enable bartik claro'
-  - 'en datetime toolbar rest jsonapi views views_ui ban automated_cron action admin_toolbar'
-  - 'config-set system.theme default bartik'
-  - 'config-set system.theme admin claro'
+  - 'si --account-pass=admin --site-name="Drupal Dockerizer"'
   - 'cron'
 
+# If set to true lanch drush commands in php-apache conteiner after up conteiner.
+run_drush_commands: false
+
 solr: false
+# Look at available version here https://hub.docker.com/_/solr
+solr_version: 4
+solr_configs_path: "{{ drupal_root_dir }}/docroot/modules/contrib/search_api_solr/solr-conf/4.x/"
 solr_core_name: drupal
 
 # Tom make `memcache` working `memcache` module should be enabled: `en memcache`.
@@ -60,14 +59,20 @@ memcache: false
 # Path to Drupal DB dump (will be imported by `db.yml` playbook).
 db_dump_path: /var/data/db/db.sql
 
+# Availible options: mysql, mariadb
 database: mysql
 mysql_root_password: root
 mysql_user: docker
 mysql_password: docker
 mysql_database: docker
+# If set to true import database after up conteiners.
+import_database: false
 
 install_adminer: false
 adminer_port: 8080
+
+pre_task_path: ../pre_task.yml
+post_task_path: ../post_task.yml
 
 custom_drupal_settings: |
   if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {

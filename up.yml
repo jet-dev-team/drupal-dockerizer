@@ -1,6 +1,7 @@
 ---
 
 - hosts: all
+
   vars_files:
     - default.config.yml
 
@@ -14,5 +15,5 @@
 
   tasks:
 
-    - name: Include import-database tasks.
-      include: tasks/import-database.yml
+    - name: Include Docker up tasks
+      include: tasks/docker-up.yml

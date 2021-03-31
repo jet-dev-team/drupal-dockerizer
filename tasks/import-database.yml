@@ -1,0 +1,17 @@
+---
+
+- name: Remove database.
+  ignore_errors: yes
+  when: database == "mysql" or database == "mariadb"
+  shell: |
+    docker exec -i {{ compose_project_name }}-database sh -c 'exec mysql -uroot -p{{ mysql_root_password }} -e "DROP DATABASE {{ mysql_database }}"'
+
+- name: Create new database.
+  when: database == "mysql" or database == "mariadb"
+  shell: |
+    docker exec -i {{ compose_project_name }}-database sh -c 'exec mysql -uroot -p{{ mysql_root_password }} -e "CREATE DATABASE {{ mysql_database }} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"'
+
+- name: Import database.
+  when: database == "mysql" or database == "mariadb"
+  shell: |
+    docker exec -i {{ compose_project_name }}-database sh -c 'exec mysql -uroot -p{{ mysql_root_password }} {{ mysql_database }}' < {{ db_dump_path }}

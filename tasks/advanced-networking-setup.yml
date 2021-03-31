@@ -1,6 +1,7 @@
 ---
 
 - name: Add Host name to /etc/hosts
+  become: true
   blockinfile:
     marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
     path: /etc/hosts

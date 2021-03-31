@@ -1,42 +1,6 @@
 ---
 
-- name: Set owner for Docker runtime dir.
-  file:
-    path: "{{ docker_runtime_dir }}"
-    state: directory
-    recurse: yes
-    owner: "{{ host_machine_user }}"
-
-- name: Set owner for Drupal root dir.
-  file:
-    path: "{{ drupal_root_dir }}"
-    state: directory
-    recurse: yes
-    owner: "{{ host_machine_user }}"
-
-- name: Set owner for Drupal files dir.
-  file:
-    path: "{{ drupal_files_dir }}"
-    state: directory
-    recurse: yes
-    mode: 0755
-    owner: "{{ host_machine_user }}"
-
-- name: Set owner for Drupal sync dir.
-  file:
-    path: "{{drupal_root_dir}}/{{drupal_web_root}}/sites/default/sync"
-    state: directory
-    recurse: yes
-    mode: 0755
-    owner: "{{ host_machine_user }}"
-
-- name: Stop all Docker containers if docker-compose.yml has changed.
-  command: >
-    docker-compose stop
-    chdir={{ docker_runtime_dir }}
-  when: docker_compose_file_result.changed
-
 - name: Bring up the Docker containers.
-  command: >
-    docker-compose up --build -d --remove-orphans
-    chdir={{ docker_runtime_dir }}
+  command: docker-compose up --build -d --remove-orphans
+  args:
+    chdir: "{{ docker_runtime_dir }}"

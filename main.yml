@@ -1,6 +1,6 @@
 ---
 
-- hosts: server
+- hosts: all
 
   vars_files:
     - default.config.yml
@@ -9,17 +9,27 @@
     - name: Include config override file, if it exists.
       include_vars: "{{ item }}"
       with_fileglob:
-        - config.yml
+        - ../config.yml
 
   roles: []
 
   tasks:
-    - name: include project setup tasks.
-      when: init_project
-      include: tasks/project-setup.yml
 
     - name: Include lamp setup tasks
-      include: tasks/lamp-setup.yml
+      include: tasks/runtime-setup.yml
+
+    - name: Check project tasks.
+      stat:
+        path: "{{pre_task_path}}"
+      register: pre_tasks
+
+    - name: Include custom project pre-tasks
+      include: "{{ item }}"
+      with_first_found:
+        - files:
+            - "{{pre_task_path}}"
+          skip: true
+      when: pre_tasks
 
     - name: Include solr setup tasks.
       when: solr
@@ -29,24 +39,37 @@
       when: advanced_networking
       include: tasks/advanced-networking-setup.yml
 
-    - name: Include Drush setup tasks
-      when: drush_install
-      include: tasks/drush-setup.yml
-
     - name: Include Settings setup tasks
       include: tasks/settings-setup.yml
 
     - name: Include Docker up tasks
       include: tasks/docker-up.yml
 
+    - name: Include Memcache setup tasks
+      include: tasks/memcache-setup.yml
+      when: memcache
+
     - name: Wait docker containers (MySQL) to up.
       pause:
         seconds: 30
 
-    - name: Setup drupal task
-      when: drush_install and init_project
-      include: tasks/drush-command.yml
+    - name: Include import-database tasks.
+      include: tasks/import-database.yml
+      when: import_database
 
-    - name: Include Memcache setup tasks
-      when: memcache
-      include: tasks/memcache-setup.yml
+    - name: Check project tasks.
+      stat:
+        path: "{{post_task_path}}"
+      register: post_tasks
+
+    - name: Include custom project post-tasks
+      include: "{{ item }}"
+      with_first_found:
+        - files:
+            - "{{post_task_path}}"
+          skip: true
+      when: post_tasks
+
+    - name: Run Drush commands.
+      include: tasks/drush-command.yml
+      when: drush_install and run_drush_commands

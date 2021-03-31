@@ -1,6 +1,7 @@
 ---
 
 - name: Add memcache connection to settings.php
+  become: true
   blockinfile:
     marker: "// {mark} {{ compose_project_name }} SETUP MEMCACHE BLOCK"
     path: "{{ drupal_root_dir }}/{{ drupal_web_root }}/sites/default/settings.php"
@@ -10,5 +11,3 @@
       $settings['cache']['default'] = 'cache.backend.memcache';
       $settings['cache']['bins']['render'] = 'cache.backend.memcache';
       $settings['memcache']['key_prefix'] = '{{ compose_project_name }}';
-
-
