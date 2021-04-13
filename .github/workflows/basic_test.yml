@@ -20,16 +20,12 @@ jobs:
       with:
         repository: 'drupal/recommended-project'
         path: './'
+        ref: '9.2.x'
 
     - name: Run composer install
       uses: php-actions/composer@v5
       with:
         command: install --ignore-platform-reqs
-
-    - name: Run composer update
-      uses: php-actions/composer@v5
-      with:
-        command: update --ignore-platform-reqs
 
     - name: Get Drupal Dockerizer repository
       uses: actions/checkout@v2
