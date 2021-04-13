@@ -9,7 +9,7 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     steps:
-    - name: Caching Composer dependencies for improve speed
+    - name: Cache Composer dependencies for improve speed
       uses: actions/cache@v2
       with:
         path: /tmp/composer-cache
@@ -22,7 +22,7 @@ jobs:
         path: './'
         ref: '9.2.x'
 
-    - name: Run composer install
+    - name: Run Composer install
       uses: php-actions/composer@v5
       with:
         command: install --ignore-platform-reqs
@@ -57,5 +57,5 @@ jobs:
         options: |
           --verbose
 
-    - name: Check drupal
+    - name: Check Drupal
       run: curl http://localhost | grep "Drupal"
