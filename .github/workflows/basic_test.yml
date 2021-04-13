@@ -1,4 +1,4 @@
-name: Check Drupal Dockerizer basic functionality
+name: Check basic functionality
 
 on:
   pull_request:
