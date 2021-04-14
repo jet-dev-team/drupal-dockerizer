@@ -59,7 +59,7 @@ jobs:
           --verbose
 
     - name: Change site name by Drush
-      run: docker exec drupal-project-7.4-develop drush cset system.site name DrupalDump
+      run: docker exec drupal-project-7.4-develop drush cset system.site name DrupalDump -y
 
     - name: Dump database from Drupal
       run: docker exec drupal-project-7.4-develop drush sql:dump --result-file=dump.sql
