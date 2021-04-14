@@ -68,6 +68,9 @@ jobs:
         hostkey:  'hostkey.pem'
         cachain:  'ca-chain.pem'
 
+    - name: Check permissions
+      run: ls -lha
+
     - name: Enable ssl in dockerizer.yml
       run: |
         echo "ssl_key_path: $GITHUB_WORKSPACE/hostkey.pem" >> dockerizer.yml
