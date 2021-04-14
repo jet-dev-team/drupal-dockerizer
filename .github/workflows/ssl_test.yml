@@ -86,4 +86,4 @@ jobs:
           --verbose
 
     - name: Check drupal.devel domain work with ssl
-      run: curl https://drupal.devel | grep "Drupal"
+      run: curl --insecure -I https://drupal.devel
