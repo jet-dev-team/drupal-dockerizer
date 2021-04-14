@@ -13,7 +13,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/composer
-        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-drupal
 
     - name: Get Drupal Project repository
       uses: actions/checkout@v2

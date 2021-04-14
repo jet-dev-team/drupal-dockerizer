@@ -12,8 +12,8 @@ jobs:
     - name: Cache Composer dependencies for improve speed
       uses: actions/cache@v2
       with:
-        path: /tmp/composer-cache
-        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-drupal
 
     - name: Get Drupal Project repository
       uses: actions/checkout@v2
