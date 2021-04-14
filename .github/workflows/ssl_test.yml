@@ -60,3 +60,27 @@ jobs:
 
     - name: Check drupal.devel domain work
       run: curl http://drupal.devel | grep "Drupal"
+
+    - name: Generate certificates for next step
+      uses: kofemann/action-create-certificate@v0.0.4
+      with:
+        hostcert: 'hostcert.pem'
+        hostkey:  'hostkey.pem'
+        cachain:  'ca-chain.pem'
+
+    - name: Enable ssl in dockerizer.yml
+      run: |
+        echo "ssl_key_path: $GITHUB_WORKSPACE/hostkey.pem" >> dockerizer.yml
+        echo "ssl_cert_path: $GITHUB_WORKSPACE/hostkey.pem" >> dockerizer.yml
+        echo "ssl_enabled: true" >> dockerizer.yml
+
+    - name: Run main playbook with ssl configuration
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Check drupal.devel domain work with ssl
+      run: curl https://drupal.devel | grep "Drupal"
