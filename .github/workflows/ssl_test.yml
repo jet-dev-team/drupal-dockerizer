@@ -58,7 +58,7 @@ jobs:
         options: |
           --verbose
 
-    - name: Check drupal.devel domain work
+    - name: Check if the site can be accessed without SSL
       run: curl http://drupal.devel | grep "Drupal"
 
     - name: Generate certificates for next step
