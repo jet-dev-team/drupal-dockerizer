@@ -9,7 +9,7 @@
     - name: Include config override file, if it exists.
       include_vars: "{{ item }}"
       with_fileglob:
-        - ../config.yml
+        - ../dockerizer.yml
 
   roles: []
 
