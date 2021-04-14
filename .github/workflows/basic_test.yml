@@ -25,6 +25,9 @@ jobs:
       with:
         command: install --ignore-platform-reqs
 
+    - name: Fix files permission after php-actions/composer@v5
+      run: sudo chown -R $(id -u):$(id -g) *
+
     - name: Get Drupal Dockerizer repository
       uses: actions/checkout@v2
       with:
