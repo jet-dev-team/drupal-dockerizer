@@ -64,17 +64,17 @@ jobs:
     - name: Generate certificates for next step
       uses: kofemann/action-create-certificate@v0.0.4
       with:
-        hostcert: 'hostcert.pem'
-        hostkey:  'hostkey.pem'
+        hostcert: 'cert.pem'
+        hostkey:  'private.key'
         cachain:  'ca-chain.pem'
 
-    - name: Check permissions
-      run: ls -lha
+    - name: Fix ssl permissions
+      run: sudo chown -R $(id -u):$(id -g) *
 
     - name: Enable ssl in dockerizer.yml
       run: |
-        echo "ssl_key_path: $GITHUB_WORKSPACE/hostkey.pem" >> dockerizer.yml
-        echo "ssl_cert_path: $GITHUB_WORKSPACE/hostcert.pem" >> dockerizer.yml
+        echo "ssl_key_path: $GITHUB_WORKSPACE/private.key" >> dockerizer.yml
+        echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> dockerizer.yml
         echo "ssl_enabled: true" >> dockerizer.yml
 
     - name: Run main playbook with ssl configuration
@@ -84,9 +84,6 @@ jobs:
         directory: .drupal-dockerizer
         options: |
           --verbose
-
-    - name: Check apache logs
-      run: cat $GITHUB_WORKSPACE/.drupal-dockerizer/drupal-project/logs/apache2/error.log
 
     - name: Check drupal.devel domain work with ssl
       run: curl https://drupal.devel | grep "Drupal"
