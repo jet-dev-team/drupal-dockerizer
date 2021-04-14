@@ -86,4 +86,4 @@ jobs:
           --verbose
 
     - name: Check drupal.devel domain work with ssl
-      run: curl --insecure -I https://drupal.devel
+      run: curl --cacert ca-chain.pem -I https://drupal.devel
