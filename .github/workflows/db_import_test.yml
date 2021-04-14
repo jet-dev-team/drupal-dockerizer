@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test_import_db:
     runs-on: ubuntu-20.04
     steps:
     - name: Cache Composer dependencies for improve speed
@@ -60,6 +60,9 @@ jobs:
 
     - name: Change site name by Drush
       run: docker exec drupal-project-7.4-develop drush cset system.site name DrupalDump -y
+
+    - name: Check permissions
+      run: ls -lah web/
 
     - name: Dump database from Drupal
       run: docker exec drupal-project-7.4-develop drush sql:dump --result-file=dump.sql
