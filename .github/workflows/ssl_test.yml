@@ -1,4 +1,4 @@
-name: Check ssl functionality
+name: Check SSL connection
 
 on:
   pull_request:
