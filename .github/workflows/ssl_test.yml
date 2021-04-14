@@ -9,7 +9,7 @@ jobs:
   test_ssl:
     runs-on: ubuntu-20.04
     steps:
-    - name: Cache Composer dependencies for improve speed
+    - name: Cache Composer dependencies to improve speed
       uses: actions/cache@v2
       with:
         path: ~/.cache/composer
