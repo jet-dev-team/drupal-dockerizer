@@ -82,5 +82,8 @@ jobs:
         options: |
           --verbose
 
+    - name: Check apache logs
+      run: cat $GITHUB_WORKSPACE/.drupal-dockerizer/drupal-project/logs/apache2/error.log
+
     - name: Check drupal.devel domain work with ssl
       run: curl https://drupal.devel | grep "Drupal"
