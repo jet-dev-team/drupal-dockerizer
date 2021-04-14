@@ -30,7 +30,7 @@ jobs:
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create basic dockerizer.yml
+    - name: Create dockerizer.yml with advanced networking
       run: |
         echo "---" > dockerizer.yml
         echo "" >> dockerizer.yml
