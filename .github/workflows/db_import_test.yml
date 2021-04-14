@@ -12,7 +12,7 @@ jobs:
     - name: Cache Composer dependencies for improve speed
       uses: actions/cache@v2
       with:
-        path: /tmp/composer-cache
+        path: ~/.cache/composer
         key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
 
     - name: Get Drupal Project repository
@@ -23,9 +23,7 @@ jobs:
         ref: '9.2.x'
 
     - name: Run Composer install
-      uses: php-actions/composer@v5
-      with:
-        command: install --ignore-platform-reqs
+      run: composer install --ignore-platform-reqs
 
     - name: Fix files permission after php-actions/composer@v5
       run: sudo chown -R $(id -u):$(id -g) *
