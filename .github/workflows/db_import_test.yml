@@ -1,4 +1,4 @@
-name: Check basic functionality
+name: Check database import functionality
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test_import_db:
     runs-on: ubuntu-20.04
     steps:
     - name: Cache Composer dependencies for improve speed
@@ -38,6 +38,7 @@ jobs:
         echo "user_uid: $(id -u)" >> dockerizer.yml
         echo "user_gid: $(id -g)" >> dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> dockerizer.yml
+        echo "db_dump_path: $GITHUB_WORKSPACE/web/dump.sql" >> dockerizer.yml
 
     - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -55,5 +56,37 @@ jobs:
         options: |
           --verbose
 
-    - name: Check Drupal
-      run: curl http://localhost | grep "Drupal"
+    - name: Change site name by Drush
+      run: docker exec drupal-project-7.4-develop drush cset system.site name DrupalDump -y
+
+    - name: Dump database from Drupal
+      run: docker exec drupal-project-7.4-develop drush sql:dump --result-file=dump.sql
+
+    - name: Destroy containers and runtime
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: reset.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Run main playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Import DataBase
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: db.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Check that import is OK and site name is DrupalDump
+      run: |
+        result="`docker exec drupal-project-7.4-develop drush cget system.site name --format=string`"
+        if [[ "$result" == "DrupalDump" ]]; then echo "Import DB is OK"; exit 0; else echo "Import db not correct"; exit 1; fi
