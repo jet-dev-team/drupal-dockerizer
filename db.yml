@@ -8,7 +8,7 @@
     - name: Include config override file, if it exists.
       include_vars: "{{ item }}"
       with_fileglob:
-        - ../.drupal_dockerizer.yml
+        - ../dockerizer.yml
 
   roles: []
 
