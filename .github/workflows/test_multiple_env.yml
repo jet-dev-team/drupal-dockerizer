@@ -52,7 +52,7 @@ jobs:
         options: |
           --verbose
 
-    - name: Change site name by Drush
+    - name: Change site name by Drush for Drupal composer project
       run: docker exec drupal-composer-7.4-develop drush cset system.site name DrupalComposer -y
 
     - name: Prepare Drupal tarball
@@ -89,7 +89,7 @@ jobs:
         options: |
           --verbose
 
-    - name: Change site name by Drush
+    - name: Change site name by Drush for Drupal tarball project
       run: docker exec drupal-tarball-7.4-develop drush cset system.site name DrupalTarball -y
 
     - name: Check Drupal Composer project on 8080 port
