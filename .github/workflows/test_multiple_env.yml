@@ -1,0 +1,97 @@
+name: Check multiple environments functionality
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test_multiple_env:
+    runs-on: ubuntu-20.04
+    env:
+      DRUPAL_VERSION: 9.1.6
+    steps:
+    - name: Cache Composer dependencies for improve speed
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-drupal
+
+
+    - name: Run Composer install
+      run: composer create-project drupal/recommended-project drupal-composer --ignore-platform-reqs
+
+    - name: Get Drupal Dockerizer repository
+      uses: actions/checkout@v2
+      with:
+        path: '.drupal-dockerizer'
+
+    - name: Create config for drupal composer project
+      run: |
+        echo "---" > dockerizer-composer.yml
+        echo "" >> dockerizer-composer.yml
+        echo "compose_project_name: drupal-composer" >> dockerizer-composer.yml
+        echo "user_uid: $(id -u)" >> dockerizer-composer.yml
+        echo "user_gid: $(id -g)" >> dockerizer-composer.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-composer" >> dockerizer-composer.yml
+        echo "apache_port: 8080" >> dockerizer-composer.yml
+
+    - name: Run main playbook for drupal composer project
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-composer.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Run drush-commands playbook for drupal composer project
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: drush-commands.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-composer.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Change site name by Drush
+      run: docker exec drupal-composer-7.4-develop drush cset system.site name DrupalComposer -y
+
+    - name: Prepare Drupal tarball
+      run: |
+        wget https://ftp.drupal.org/files/projects/drupal-${{ env.DRUPAL_VERSION }}.tar.gz
+        tar xvf drupal-${{ env.DRUPAL_VERSION }}.tar.gz
+        mv drupal-${{ env.DRUPAL_VERSION }} drupal-tarball
+
+    - name: Create config for drupal tarball
+      run: |
+        echo "---" > dockerizer-tarball.yml
+        echo "" >> dockerizer-tarball.yml
+        echo "compose_project_name: drupal-tarball" >> dockerizer-tarball.yml
+        echo "user_uid: $(id -u)" >> dockerizer-tarball.yml
+        echo "user_gid: $(id -g)" >> dockerizer-tarball.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-tarball" >> dockerizer-tarball.yml
+        echo "apache_port: 8090" >> dockerizer-tarball.yml
+
+    - name: Run main playbook for drupal composer project
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-tarball.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Run drush-commands playbook for drupal composer project
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: drush-commands.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-tarball.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Change site name by Drush
+      run: docker exec drupal-tarball-7.4-develop drush cset system.site name DrupalTarball -y
+
+    - name: Check Drupal Composer project on 8080 port
+      run: curl http://localhost:8080 | grep "DrupalComposer"
+
+    - name: Check Drupal Tarball project on 8090 port
+      run: curl http://localhost:8090 | grep "DrupalTarball"
