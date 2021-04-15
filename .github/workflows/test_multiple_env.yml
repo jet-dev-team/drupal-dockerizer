@@ -39,7 +39,7 @@ jobs:
     - name: Run main playbook for drupal composer project
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-composer.yml
+        playbook: main.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-composer.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -47,7 +47,7 @@ jobs:
     - name: Run drush-commands playbook for drupal composer project
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: drush-commands.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-composer.yml
+        playbook: drush-commands.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-composer.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -74,7 +74,7 @@ jobs:
     - name: Run main playbook for drupal composer project
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-tarball.yml
+        playbook: main.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-tarball.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -82,7 +82,7 @@ jobs:
     - name: Run drush-commands playbook for drupal composer project
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: drush-commands.yml --extra-vars @$GITHUB_WORKSPACE/dockerizer-tarball.yml
+        playbook: drush-commands.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-tarball.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
