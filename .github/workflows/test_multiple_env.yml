@@ -70,6 +70,8 @@ jobs:
         echo "user_gid: $(id -g)" >> dockerizer-tarball.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-tarball" >> dockerizer-tarball.yml
         echo "apache_port: 8090" >> dockerizer-tarball.yml
+        echo "drupal_web_root: ./" >> dockerizer-tarball.yml
+
 
     - name: Run main playbook for drupal composer project
       uses: dawidd6/action-ansible-playbook@v2
