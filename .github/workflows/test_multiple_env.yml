@@ -25,7 +25,7 @@ jobs:
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create config for drupal composer project
+    - name: Create config for the first environment
       run: |
         echo "---" > dockerizer-composer.yml
         echo "" >> dockerizer-composer.yml
