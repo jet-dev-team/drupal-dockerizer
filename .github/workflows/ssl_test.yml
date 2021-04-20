@@ -30,17 +30,17 @@ jobs:
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create dockerizer.yml with advanced networking
+    - name: Create drupal-dockerizer.yml with advanced networking
       run: |
-        echo "---" > dockerizer.yml
-        echo "" >> dockerizer.yml
-        echo "compose_project_name: drupal-project" >> dockerizer.yml
-        echo "user_uid: $(id -u)" >> dockerizer.yml
-        echo "user_gid: $(id -g)" >> dockerizer.yml
-        echo "drupal_root_dir: $GITHUB_WORKSPACE" >> dockerizer.yml
-        echo "advanced_networking: true" >> dockerizer.yml
-        echo "network_id: 15" >> dockerizer.yml
-        echo "domain_name: drupal.devel" >> dockerizer.yml
+        echo "---" > drupal-dockerizer.yml
+        echo "" >> drupal-dockerizer.yml
+        echo "compose_project_name: drupal-project" >> drupal-dockerizer.yml
+        echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
+        echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
+        echo "advanced_networking: true" >> drupal-dockerizer.yml
+        echo "network_id: 15" >> drupal-dockerizer.yml
+        echo "domain_name: drupal.devel" >> drupal-dockerizer.yml
 
     - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -71,11 +71,11 @@ jobs:
     - name: Fix ssl permissions
       run: sudo chown -R $(id -u):$(id -g) *
 
-    - name: Enable ssl in dockerizer.yml
+    - name: Enable ssl in drupal-dockerizer.yml
       run: |
-        echo "ssl_key_path: $GITHUB_WORKSPACE/private.key" >> dockerizer.yml
-        echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> dockerizer.yml
-        echo "ssl_enabled: true" >> dockerizer.yml
+        echo "ssl_key_path: $GITHUB_WORKSPACE/private.key" >> drupal-dockerizer.yml
+        echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> drupal-dockerizer.yml
+        echo "ssl_enabled: true" >> drupal-dockerizer.yml
 
     - name: Run main playbook with ssl configuration
       uses: dawidd6/action-ansible-playbook@v2
