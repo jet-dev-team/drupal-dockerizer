@@ -57,7 +57,7 @@ solr_core_name: drupal
 memcache: false
 
 # Path to Drupal DB dump (will be imported by `db.yml` playbook).
-db_dump_path: /var/data/db/db.sql
+db_dump_path: "{{drupal_root_dir}}/dump.sql"
 
 # Availible options: mysql, mariadb
 database: mysql
