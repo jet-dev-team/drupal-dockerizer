@@ -80,7 +80,7 @@ jobs:
         options: |
           --verbose
 
-    - name: Run drush-commands playbook for drupal composer project
+    - name: Run Drush commands playbook for the second environment 
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: drush-commands.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-tarball.yml
