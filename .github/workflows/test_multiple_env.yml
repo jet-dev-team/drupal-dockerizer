@@ -35,7 +35,7 @@ jobs:
         echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-composer" >> dockerizer-composer.yml
         echo "apache_port: 8080" >> dockerizer-composer.yml
 
-    - name: Run main playbook for drupal composer project
+    - name: Run the main playbook for the first environment
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: main.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-composer.yml
