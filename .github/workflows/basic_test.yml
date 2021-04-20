@@ -30,14 +30,14 @@ jobs:
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create basic dockerizer.yml
+    - name: Create basic drupal-dockerizer.yml
       run: |
-        echo "---" > dockerizer.yml
-        echo "" >> dockerizer.yml
-        echo "compose_project_name: drupal-project" >> dockerizer.yml
-        echo "user_uid: $(id -u)" >> dockerizer.yml
-        echo "user_gid: $(id -g)" >> dockerizer.yml
-        echo "drupal_root_dir: $GITHUB_WORKSPACE" >> dockerizer.yml
+        echo "---" > drupal-dockerizer.yml
+        echo "" >> drupal-dockerizer.yml
+        echo "compose_project_name: drupal-project" >> drupal-dockerizer.yml
+        echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
+        echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
 
     - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
