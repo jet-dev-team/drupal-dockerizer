@@ -72,7 +72,7 @@ jobs:
         echo "drupal_web_root: ./" >> dockerizer-tarball.yml
 
 
-    - name: Run main playbook for drupal composer project
+    - name: Run the main playbook for the second environment 
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: main.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-tarball.yml
