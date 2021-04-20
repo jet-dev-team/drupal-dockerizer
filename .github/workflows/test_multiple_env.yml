@@ -19,7 +19,7 @@ jobs:
 
 
     - name: Run Composer install
-      run: composer create-project drupal/recommended-project drupal-composer --ignore-platform-reqs
+      run: composer create-project drupal/recommended-project drupal-composer --ignore-platform-reqs --no-interaction
 
     - name: Get Drupal Dockerizer repository
       uses: actions/checkout@v2
