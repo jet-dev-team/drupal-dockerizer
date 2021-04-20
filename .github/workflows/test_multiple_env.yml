@@ -17,7 +17,6 @@ jobs:
         path: ~/.cache/composer
         key: ${{ runner.os }}-drupal
 
-
     - name: Run Composer install
       run: composer create-project drupal/recommended-project drupal-composer --ignore-platform-reqs --no-interaction
 
