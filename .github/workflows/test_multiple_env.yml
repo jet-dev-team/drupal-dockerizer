@@ -54,7 +54,7 @@ jobs:
     - name: Change site name by Drush for Drupal composer project
       run: docker exec drupal-composer-7.4-develop drush cset system.site name DrupalComposer -y
 
-    - name: Prepare Drupal tarball
+    - name: Use Drupal tarball to prepare the second environment
       run: |
         wget https://ftp.drupal.org/files/projects/drupal-${{ env.DRUPAL_VERSION }}.tar.gz
         tar xvf drupal-${{ env.DRUPAL_VERSION }}.tar.gz
