@@ -8,21 +8,21 @@ Drupal Dockerizer is suitable for spinning up:
 - Automated CI builds
 - Staging and testing servers
 
-YAY! You can spin up multiple environments on single machine!
+YAY! You can spin up multiple environments on a single machine!
 
 Drupal Dockerizer works best on Linux (deb-based distributions have been tested).
 
-To spin up development environment with Drupal Dockerizer on MacOS and Windows you could use virtual machines or remote servers with Linux installed. Take a look at [Visual Studio Code Remote development](https://code.visualstudio.com/docs/remote/remote-overview).
+To spin up a development environment with Drupal Dockerizer on MacOS and Windows you could use virtual machines or remote servers with Linux installed. Take a look at [Visual Studio Code Remote development](https://code.visualstudio.com/docs/remote/remote-overview).
 
-In a nutshell Drupal Dockerizer is not more than an Ansible script which automates routine tasks for getting valid docker-compose file.
+In a nutshell Drupal Dockerizer is not more than an Ansible script which automates routine tasks for getting valid `docker-compose.yml` files.
 
 ## How to install Drupal 9 on fresh Ubuntu 20.04 with Drupal Dockerizer
 
-We just got fresh Ubuntu 20.04 server. Let's go through a quick tour about creating Drupal 9 fresh site installation.
+We just got a fresh Ubuntu 20.04 server. Let's go through a quick tour about creating new Drupal 9 site installation.
 
 ### Prepare your system
 
-Let’s create local user in order not to work under `root` account.
+Let’s create a local user in order to avoid work under a `root` account.
 
 ```bash
 groupadd docker
@@ -100,9 +100,9 @@ As a result you should receive the next directory structure:
 
 You are done. You can access your fresh Drupal 9 site by visiting your IP address on port 80.
 
-### How it works internally?
+### How does it work internally?
 
-There is no any magic! It is just a `docker-compose.yml` file. You can find it inside `drupal-dockerizer` directory.
+There is no magic! It is just a `docker-compose.yml` file. You can find it inside the `drupal-dockerizer` directory.
 
 ```bash
 .
@@ -124,17 +124,17 @@ cat ~/Projects/drupal9/drupal-dockerizer/drupal9/docker-compose.yml
 
 Now you can use standard Docker Compose to manage your installation.
 
-All the configuration is done via `drupal-dockerizer.yml` config file. You can find a lot of examples by exploing tests. Take a look at [.github/workflows](.github/workflows).
+All the configuration is done via `drupal-dockerizer.yml` config file. You can find a lot of examples by exploring tests. Take a look at [.github/workflows](.github/workflows).
 
 ### Playbooks for controlling your projects
 
-Drupal Dockerizer is shipped with additional Ansible playbooks to help you automate your routine tasks. Make sure you are running that playbooks inside `drupal-dockerizer` directory. The place where playbook files actually live.
+Drupal Dockerizer is shipped with additional Ansible playbooks to help you automate your routine tasks. Make sure you are running those playbooks inside the `drupal-dockerizer` directory. The place where playbook files actually live.
 
 Each new project should start with running `main.yml` playbook which prepares configuration.
 
 ### Stop containers
 
-To stop your containers and save the data you can use `stop.yml` playbook. It's an equivalent of `docker-compose stop` command.
+To stop your containers and save the data you can use the `stop.yml` playbook. It's an equivalent of `docker-compose stop` command.
 
 ```bash
 ansible-playbook stop.yml
@@ -142,7 +142,7 @@ ansible-playbook stop.yml
 
 ### Up containers
 
-To spin up your containers you can use `up.yml` playbook. It's an equivalent of `docker-compose up` command.
+To spin up your containers you can use the `up.yml` playbook. It's an equivalent of `docker-compose up` command.
 
 ```bash
 ansible-playbook up.yml
@@ -150,13 +150,13 @@ ansible-playbook up.yml
 
 ### Remove containers and their data
 
-To remove everytying and start from scratch you can use `reset.yml` playbook. It's an equivalent of `docker-compose down` command. This command will not remove your code. Please, note this command requires `sudoers` permissions.
+To remove everything and start from scratch you can use `reset.yml` playbook. It's an equivalent of `docker-compose down` command. This command will not remove your code. Please, note this command requires `sudoers` permissions.
 
 ```bash
 ansible-playbook reset.yml --ask-become-pass
 ```
 
-After reseting your environment you have to run `main.yml` playbook again to spin up your environment.
+After resetting your environment you have to run `main.yml` playbook again to spin up your environment.
 
 ### How to run commands inside containers
 
@@ -178,7 +178,7 @@ cat drupal9/logs/apache2/error.log
 ### Import MySQL database from dump
 
 There is a playbook which automates database import into database container.
-By default it just picks up `dump.sql` file from Drupal root directory.
+By default it just picks up the `dump.sql` file from the Drupal root directory.
 
 ```bash
 .
@@ -191,7 +191,7 @@ By default it just picks up `dump.sql` file from Drupal root directory.
 ansible-playbook db.yml
 ```
 
-If your database dump was placed somewhere in other directory you can change configuration by adding the line to `drupal-dockerizer.yml` file.
+If your database dump was placed somewhere in another directory you can change configuration by adding the line to `drupal-dockerizer.yml` file.
 
 ```yml
 db_dump_path: /path/to/your/dump.sql
