@@ -91,7 +91,7 @@ jobs:
     - name: Change site name by Drush for the second environment
       run: docker exec drupal-tarball-7.4-develop drush cset system.site name DrupalTarball -y
 
-    - name: Check Drupal Composer project on 8080 port
+    - name: Check Drupal whether the first environment is up on 8080 port
       run: curl http://localhost:8080 | grep "DrupalComposer"
 
     - name: Check Drupal Tarball project on 8090 port
