@@ -51,7 +51,7 @@ jobs:
         options: |
           --verbose
 
-    - name: Change site name by Drush for Drupal composer project
+    - name: Change site name by Drush for the first environment
       run: docker exec drupal-composer-7.4-develop drush cset system.site name DrupalComposer -y
 
     - name: Use Drupal tarball to prepare the second environment
