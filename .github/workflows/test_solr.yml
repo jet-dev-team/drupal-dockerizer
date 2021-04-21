@@ -75,7 +75,7 @@ jobs:
       run: docker exec drupal-project-7.4-develop drush solr-gsc solr config.zip 8.8
 
     - name: Unzip solr configuration.
-      run: unzip config.zip -d solr_configuration
+      run: unzip web/config.zip -d solr_configuration
 
     - name: Enable solr in drupal-dockerizer.yml
       run: |
