@@ -28,7 +28,7 @@ jobs:
       run: composer install --ignore-platform-reqs
 
     - name: Add required modules to Drupal
-      run: composer require drupal/search_api_solr drupal/devel drush/drush--ignore-platform-reqs
+      run: composer require drupal/search_api_solr drupal/devel drush/drush --ignore-platform-reqs
 
     - name: Get Drupal Dockerizer repository
       uses: actions/checkout@v2
