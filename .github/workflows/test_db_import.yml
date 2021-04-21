@@ -1,15 +1,17 @@
-name: Check SSL connection
+name: Check database import functionality
 
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
   workflow_dispatch:
 
 jobs:
-  test_ssl:
+  test_import_db:
     runs-on: ubuntu-20.04
     steps:
-    - name: Cache Composer dependencies to improve speed
+    - name: Cache Composer dependencies for improve speed
       uses: actions/cache@v2
       with:
         path: ~/.cache/composer
@@ -30,7 +32,7 @@ jobs:
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create drupal-dockerizer.yml with advanced networking
+    - name: Create basic drupal-dockerizer.yml
       run: |
         echo "---" > drupal-dockerizer.yml
         echo "" >> drupal-dockerizer.yml
@@ -38,9 +40,7 @@ jobs:
         echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
-        echo "advanced_networking: true" >> drupal-dockerizer.yml
-        echo "network_id: 15" >> drupal-dockerizer.yml
-        echo "domain_name: drupal.devel" >> drupal-dockerizer.yml
+        echo "db_dump_path: $GITHUB_WORKSPACE/web/dump.sql" >> drupal-dockerizer.yml
 
     - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -58,26 +58,21 @@ jobs:
         options: |
           --verbose
 
-    - name: Check if the site can be accessed without SSL
-      run: curl http://drupal.devel | grep "Drupal"
+    - name: Change site name by Drush
+      run: docker exec drupal-project-7.4-develop drush cset system.site name DrupalDump -y
 
-    - name: Generate certificates for next step
-      uses: kofemann/action-create-certificate@v0.0.4
+    - name: Dump database from Drupal
+      run: docker exec drupal-project-7.4-develop drush sql:dump --result-file=dump.sql
+
+    - name: Destroy containers and runtime
+      uses: dawidd6/action-ansible-playbook@v2
       with:
-        hostcert: 'cert.pem'
-        hostkey:  'private.key'
-        cachain:  'ca-chain.pem'
+        playbook: reset.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
 
-    - name: Fix ssl permissions
-      run: sudo chown -R $(id -u):$(id -g) *
-
-    - name: Enable ssl in drupal-dockerizer.yml
-      run: |
-        echo "ssl_key_path: $GITHUB_WORKSPACE/private.key" >> drupal-dockerizer.yml
-        echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> drupal-dockerizer.yml
-        echo "ssl_enabled: true" >> drupal-dockerizer.yml
-
-    - name: Run main playbook with ssl configuration
+    - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: main.yml
@@ -85,5 +80,15 @@ jobs:
         options: |
           --verbose
 
-    - name: Check if the site can be accessed via SSL
-      run: curl --insecure -I https://drupal.devel
+    - name: Import DataBase
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: db.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Check that import is OK and site name is DrupalDump
+      run: |
+        result="`docker exec drupal-project-7.4-develop drush cget system.site name --format=string`"
+        if [[ "$result" == "DrupalDump" ]]; then echo "Import DB is OK"; exit 0; else echo "Import db not correct"; exit 1; fi

@@ -1,12 +1,14 @@
-name: Check basic functionality
+name: Check memcache functionality
 
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
   workflow_dispatch:
 
 jobs:
-  test:
+  test_memcache:
     runs-on: ubuntu-20.04
     steps:
     - name: Cache Composer dependencies for improve speed
@@ -24,6 +26,9 @@ jobs:
 
     - name: Run Composer install
       run: composer install --ignore-platform-reqs
+
+    - name: Add memcache module to drupal
+      run: composer require drupal/memcache --ignore-platform-reqs
 
     - name: Get Drupal Dockerizer repository
       uses: actions/checkout@v2
@@ -54,6 +59,32 @@ jobs:
         directory: .drupal-dockerizer
         options: |
           --verbose
+
+    - name: Enable memcache in database
+      run: docker exec drupal-project-7.4-develop drush en memcache memcache_admin -y
+
+    - name: Stop containers
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: stop.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Enable memcache in drupal-dockerizer.yml
+      run: |
+        echo "memcache: true" >> drupal-dockerizer.yml
+
+    - name: Run main playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: settings.php should have memcache config
+      run: cat web/sites/default/settings.php | grep "memcache"
 
     - name: Check Drupal
       run: curl http://localhost | grep "Drupal"

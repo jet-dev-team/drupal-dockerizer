@@ -1,15 +1,17 @@
-name: Check memcache functionality
+name: Check SSL connection
 
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
   workflow_dispatch:
 
 jobs:
-  test_memcache:
+  test_ssl:
     runs-on: ubuntu-20.04
     steps:
-    - name: Cache Composer dependencies for improve speed
+    - name: Cache Composer dependencies to improve speed
       uses: actions/cache@v2
       with:
         path: ~/.cache/composer
@@ -25,15 +27,12 @@ jobs:
     - name: Run Composer install
       run: composer install --ignore-platform-reqs
 
-    - name: Add memcache module to drupal
-      run: composer require drupal/memcache --ignore-platform-reqs
-
     - name: Get Drupal Dockerizer repository
       uses: actions/checkout@v2
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create basic drupal-dockerizer.yml
+    - name: Create drupal-dockerizer.yml with advanced networking
       run: |
         echo "---" > drupal-dockerizer.yml
         echo "" >> drupal-dockerizer.yml
@@ -41,6 +40,9 @@ jobs:
         echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
+        echo "advanced_networking: true" >> drupal-dockerizer.yml
+        echo "network_id: 15" >> drupal-dockerizer.yml
+        echo "domain_name: drupal.devel" >> drupal-dockerizer.yml
 
     - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -58,22 +60,26 @@ jobs:
         options: |
           --verbose
 
-    - name: Enable memcache in database
-      run: docker exec drupal-project-7.4-develop drush en memcache memcache_admin -y
+    - name: Check if the site can be accessed without SSL
+      run: curl http://drupal.devel | grep "Drupal"
 
-    - name: Stop containers
-      uses: dawidd6/action-ansible-playbook@v2
+    - name: Generate certificates for next step
+      uses: kofemann/action-create-certificate@v0.0.4
       with:
-        playbook: stop.yml
-        directory: .drupal-dockerizer
-        options: |
-          --verbose
+        hostcert: 'cert.pem'
+        hostkey:  'private.key'
+        cachain:  'ca-chain.pem'
 
-    - name: Enable memcache in drupal-dockerizer.yml
+    - name: Fix ssl permissions
+      run: sudo chown -R $(id -u):$(id -g) *
+
+    - name: Enable ssl in drupal-dockerizer.yml
       run: |
-        echo "memcache: true" >> drupal-dockerizer.yml
+        echo "ssl_key_path: $GITHUB_WORKSPACE/private.key" >> drupal-dockerizer.yml
+        echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> drupal-dockerizer.yml
+        echo "ssl_enabled: true" >> drupal-dockerizer.yml
 
-    - name: Run main playbook
+    - name: Run main playbook with ssl configuration
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: main.yml
@@ -81,8 +87,5 @@ jobs:
         options: |
           --verbose
 
-    - name: settings.php should have memcache config
-      run: cat web/sites/default/settings.php | grep "memcache"
-
-    - name: Check Drupal
-      run: curl http://localhost | grep "Drupal"
+    - name: Check if the site can be accessed via SSL
+      run: curl --insecure -I https://drupal.devel
