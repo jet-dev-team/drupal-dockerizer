@@ -93,7 +93,7 @@ jobs:
       run: docker exec drupal-project-7.4-develop drush devel-generate:content -y
 
     - name: Index nodes
-      run: docker exec drupal-project-7.4-develop drush devel-generate:content -y
+      run: docker exec drupal-project-7.4-develop drush -vv sapi-i
 
     - name: Check search indexes works.
       run: docker exec drupal-project-7.4-develop drush sapi-search node Dolore
