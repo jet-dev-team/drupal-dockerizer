@@ -90,7 +90,7 @@ jobs:
           --verbose
 
     - name: Get solr logs
-      run: docker docker logs drupal-project-solr
+      run: docker logs drupal-project-solr
 
     - name: Generate random nodes
       run: docker exec drupal-project-7.4-develop drush devel-generate:content -y
