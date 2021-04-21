@@ -11,28 +11,24 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Steps to reproduce the behavior.
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Terminal Output or Screenshots**
+If applicable, add terminal output and. screenshots to help explain your problem.
 
 **Configuration**
 Add your drupal-dockerizer.yml file or vars.
 
 **Environment (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
+ - OS: [e.g. Ubuntu 20.04]
+ - Drupal Dockerizer version [e.g. 2.0.1]
  - Docker version
  - Docker compose version
  - Ansible version
- - Version [e.g. 22]
+ - Browser [e.g. chrome, safari]
 
 **Additional context**
 Add any other context about the problem here.
