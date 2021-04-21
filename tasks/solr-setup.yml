@@ -69,3 +69,11 @@
     state: directory
     owner: "{{user_uid|int}}"
     group: "{{user_gid|int}}"
+
+- name: Check owner for solr data dir.
+  file:
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data/solr_data"
+    state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
