@@ -33,7 +33,7 @@ jobs:
         echo "user_uid: $(id -u)" >> dockerizer-composer.yml
         echo "user_gid: $(id -g)" >> dockerizer-composer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-composer" >> dockerizer-composer.yml
-        echo "apache_port: 8080" >> dockerizer-composer.yml
+        echo "port: 8080" >> dockerizer-composer.yml
 
     - name: Run the main playbook for the first environment
       uses: dawidd6/action-ansible-playbook@v2
@@ -68,11 +68,11 @@ jobs:
         echo "user_uid: $(id -u)" >> dockerizer-tarball.yml
         echo "user_gid: $(id -g)" >> dockerizer-tarball.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-tarball" >> dockerizer-tarball.yml
-        echo "apache_port: 8090" >> dockerizer-tarball.yml
+        echo "port: 8090" >> dockerizer-tarball.yml
         echo "drupal_web_root: ./" >> dockerizer-tarball.yml
 
 
-    - name: Run the main playbook for the second environment 
+    - name: Run the main playbook for the second environment
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: main.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-tarball.yml
@@ -80,7 +80,7 @@ jobs:
         options: |
           --verbose
 
-    - name: Run Drush commands playbook for the second environment 
+    - name: Run Drush commands playbook for the second environment
       uses: dawidd6/action-ansible-playbook@v2
       with:
         playbook: drush-commands.yml --extra-vars @/$GITHUB_WORKSPACE/dockerizer-tarball.yml

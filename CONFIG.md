@@ -12,8 +12,8 @@
 | drupal_files_dir | Absolute path to your drupal files directory | /var/data/drupal_files |
 | drupal_hash_salt | Hash salt for drupal site. | demo_site |
 | drupal_config_sync_folder | Relative path from drupal_web_root for you config sync directory | sites/default/sync |
-| apache_port | Port where you up your drupal site by http protocol. No need if advanced_networking is true | 80 |
-| apache_port_ssl | Port where you up your drupal site by https protocol you shoud set ssl_enabled to true | 443 |
+| port | Port where you up your drupal site by http protocol. No need if advanced_networking is true | 80 |
+| ssl_port | Port where you up your drupal site by https protocol you shoud set ssl_enabled to true | 443 |
 | ssl_enabled | Enable https protocol for your project | true |
 | ssl_cert_path | Absolute path to fullchain ssl certeficate | /var/data/ssl/fullchain.pem |
 | ssl_key_path | Absolute path to ssl private key | /var/data/ssl/privkey.pem |

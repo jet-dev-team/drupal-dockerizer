@@ -17,8 +17,8 @@ drupal_hash_salt: demo_site
 # Absolute Path to Drupal config sync dir.
 drupal_config_sync_folder: sites/default/sync
 
-apache_port: 80
-apache_port_ssl: 443
+port: 80
+ssl_port: 443
 ssl_enabled: false
 ssl_cert_path: /var/data/ssl/fullchain.pem
 ssl_key_path: /var/data/ssl/privkey.pem
