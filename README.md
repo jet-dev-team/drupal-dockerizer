@@ -60,6 +60,7 @@ compose_project_name: drupal9
 user_uid: `id -u`
 user_gid: `id -g`
 drupal_root_dir: $HOME/Projects/drupal9
+port: 8090
 EOT
 
 cd ~/Projects/drupal9/drupal-dockerizer
@@ -98,7 +99,7 @@ As a result you should receive the next directory structure:
     └── ...
 ```
 
-You are done. You can access your fresh Drupal 9 site by visiting your IP address on port 80.
+You are done. You can access your fresh Drupal 9 site by visiting your IP address on port 8090.
 
 ### How does it work internally?
 
