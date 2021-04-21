@@ -27,9 +27,9 @@ services:
       - database
 {% if not advanced_networking %}
     ports:
-      - "{{ apache_port }}:80"
+      - "{{ port }}:80"
 {% if ssl_enabled %}
-      - "{{ apache_port_ssl }}:443"
+      - "{{ ssl_port }}:443"
 {% endif %}
 {% endif %}
     links:
