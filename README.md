@@ -8,7 +8,7 @@ Drupal Dockerizer is suitable for spinning up:
 - Automated CI builds
 - Staging and testing servers
 
-YAY! You can spin up multiple environments on a single machine!
+YAY! :boom: You can spin up multiple environments on a single machine!
 
 Drupal Dockerizer works best on Linux (deb-based distributions have been tested).
 
