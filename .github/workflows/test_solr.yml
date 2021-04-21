@@ -66,10 +66,10 @@ jobs:
       run: docker exec drupal-project-7.4-develop drush en devel_generate search_api_solr -y
 
     - name: Copy Drupal configs for solr
-      run: cp -R .drupal-dockerizer/.github/data/solr_drupal_configs/* web/solr/
+      run: mkdir web/solr_drupal_configs && cp -R .drupal-dockerizer/.github/data/solr_drupal_configs/* web/solr_drupal_configs/
 
     - name: Import Drupal configs for solr
-      run: docker exec drupal-project-7.4-develop drush config:import --diff --partial --source=solr
+      run: docker exec drupal-project-7.4-develop drush config:import --diff --partial --source=solr_drupal_configs
 
     - name: Generate solr config
       run: docker exec drupal-project-7.4-develop drush solr-gsc solr config.zip 8.8
