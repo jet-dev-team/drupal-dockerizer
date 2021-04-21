@@ -210,4 +210,4 @@ drush_commands:
 
 ## Credits
 
-Drupal Dockerizer was created and is maintained by [Jet.Dev](https://jet.dev/) team.
+Drupal Dockerizer was created and is maintained with :heart: by Drupal Dockerizer team and [Jet.Dev](https://jet.dev/).
