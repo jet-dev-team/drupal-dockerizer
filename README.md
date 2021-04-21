@@ -1,227 +1,213 @@
 # Drupal Dockerizer
 
-## Requirements
+A set of Ansible playbooks for spinning up Drupal projects with Docker Compose.
 
-- python [instruction](https://www.python.org/downloads/)
-- git [instruction for install](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- ansible [instruction for install](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- docker [instruction for install](https://docs.docker.com/get-docker/)
-- docker-compose [instruction for install](https://docs.docker.com/compose/install/)
+Drupal Dockerizer is suitable for spinning up:
 
-After install docker need add your user to docker group and logout/login to you system, see [instruction](https://docs.docker.com/engine/install/linux-postinstall/)
+- Local development environments (with XDebug support)
+- Automated CI builds
+- Staging and testing servers
 
-## Quickstart
+YAY! :boom: You can spin up multiple environments on a single machine!
 
-You can use ansible-pull tool from standard package ansible for quick setup your project.
+Drupal Dockerizer works best on Linux (deb-based distributions have been tested).
 
-For that create config yml file in any place your need(in drupal project directory or external folder). Ensure that all needed config options is setup.
+To spin up a development environment with Drupal Dockerizer on MacOS and Windows you could use virtual machines or remote servers with Linux installed. Take a look at [Visual Studio Code Remote development](https://code.visualstudio.com/docs/remote/remote-overview).
 
-Minimum required options:
+In a nutshell Drupal Dockerizer is not more than an Ansible script which automates routine tasks for getting valid `docker-compose.yml` files.
 
-```yaml
+## How to install Drupal 9 on fresh Ubuntu 20.04 with Drupal Dockerizer
+
+We just got a fresh Ubuntu 20.04 server. Let's go through a quick tour about creating new Drupal 9 site installation.
+
+### Prepare your system
+
+Let’s create a local user in order to avoid work under a `root` account.
+
+```bash
+groupadd docker
+
+export USERNAME=<username>
+useradd -m -G sudo,docker -s /bin/bash $USERNAME
+passwd $USERNAME
+mkdir /home/$USERNAME/.ssh
+curl https://github.com/$USERNAME.keys | tee -a /home/$USERNAME/.ssh/authorized_keys
+chown -R $USERNAME:$USERNAME /home/$USERNAME/
+```
+
+Let’s install requirements.
+
+```bash
+apt update
+apt -y install ansible docker.io docker-compose composer git unzip
+
+systemctl enable --now docker.service
+```
+
+Now you are able to connect to your server with your SSH keys or just use `su $USERNAME` to log into your user account to start configuring Drupal Dockerizer.
+
+### Configure Drupal Dockerizer
+
+```bash
+mkdir ~/Projects
+composer create-project drupal/recommended-project ~/Projects/drupal9 --ignore-platform-reqs --no-interaction
+git clone https://github.com/jet-dev-team/drupal-dockerizer.git ~/Projects/drupal9/drupal-dockerizer
+
+cat <<EOT > ~/Projects/drupal9/drupal-dockerizer.yml
 ---
 
-compose_project_name: drupal-project
-user_uid: 1000
-user_gid: 1000
-drupal_root_dir: /var/data/drupal
-```
+compose_project_name: drupal9
+user_uid: `id -u`
+user_gid: `id -g`
+drupal_root_dir: $HOME/Projects/drupal9
+port: 8090
+EOT
 
-Remember: other options will setted by default from `default.config.yml` file.
-
-For more options [see](CONFIG.md)
-
-For up your drupal project in docker containers run:
-
-```bash
-ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git main.yml --ask-become-pass
-```
-
-After done you should have drupal project in docker containers with empty database.
-Check containers status by run `docker ps` command.
-If you use database dump you can set in config  option `db_dump_path` to absolute path to you database dump. For import database run:
-
-```bash
-ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git db.yml
-```
-
-For stop or up containers just replace `db.yml` in command to `stop.yml` or `up.yml`
-
-For fully remove all projects data and down docker conteiners you can run:
-
-```bash
-ansible-pull --extra-vars @/<absolute_pat_to_config> -U https://github.com/jet-dev-team/drupal-dockerizer.git reset.yml --ask-become-pass
-```
-
-This command remove all projects containers, volumes with data in database and runtime directory.
-
-### Usage ansible-pull
-
-By default pulling data by ansible-pull placed in `~/.ansible/pull/<hostname>` directory. You can change it by add to ansible-pull command destination option `-d <DEST>` or `--directory <DEST>`.
-
-You can anchor version drupal-dockerizer by add to ansible-pull command option `-C <TAG_NAME>` or `--checkout <TAG_NAME>`
-
-For more information about ansible-pull see [documentations](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html).
-
-### Xdebug setup
-
-For advanced network setup set in `config.yml` variable `xdebug_enviroment` like this
-
-```bash
-remote_enable=1 remote_connect_back=1 remote_port=9008 remote_host=192.168.{network_id}.1 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
-```
-
-For work Xdebug with advanced networking in vscode add to your launcher.json file in project next lines:
-
-```json
-    {
-      "name": "XDebug Docker",
-      "type": "php",
-      "request": "launch",
-      "hostname" : "192.168.{network_id}.1",
-      "port": 9008,
-      "pathMappings": {
-        "/var/www": "${workspaceRoot}/<path_to_drupal_project>"
-      },
-      "xdebugSettings": {
-        "show_hidden": 1,
-        "max_data": -1,
-        "max_depth": 2,
-        "max_children": 100,
-      }
-    },
-```
-
-#### For MacOs the next config should be used
-
-Make sure your `config.yml` contains the next config:
-
-```bash
-# Enviroment variable for php xdebug extensions
-xdebug_enviroment: remote_enable=1 remote_connect_back=0 remote_port=9000 remote_host=10.254.254.254 show_error_trace=0 show_local_vars=1 remote_autostart=1 show_exception_trace=0 idekey=VSCODE
-```
-
-Make sure you've created Host address alias on MacOS:
-
-```bash
-sudo ifconfig lo0 alias 10.254.254.254
-```
-
-Your `launch.json` should look like the next config:
-
-```json
-    {
-      "name": "XDebug Docker",
-      "type": "php",
-      "request": "launch",
-      "port": 9000,
-      "pathMappings": {
-        "/var/www": "${workspaceRoot}/<path_to_drupal_project>"
-      },
-      "xdebugSettings": {
-        "show_hidden": 1,
-        "max_data": -1,
-        "max_depth": 2,
-        "max_children": 100,
-      }
-    }
-```
-
-How to use debugger with Drush commands?
-
-1. Get the name of web server container using command: `docker ps | grep webserver`
-2. SSH into the container by name. Example: `docker exec -it yourproject-php72-develop bash`
-3. Set your breakpoint and run Drush command as usual
-
-### Advanced Networking
-
-You can use an advanced docker network to be able to conveniently host multiple Drupal projects on one computer.
-
-Set in config.yml `advanced_networking: true`.
-
-You can change the ip address of the project using the variable `network_id` in `config.yml` file
-
-You can change doamin name by variable `domain_name` in `config.yml` file
-
-#### Advanced Networking Limitation
-
-The advanced network only works on a machine with a Linux distribution.
-
-#### Advanced Networking project structure
-
-- `Adminer` placed on domain name and on 8080 port.
-- Solr 4 placed on domain name and on 8983 port and /solr path. `http://drupal.devel:8983/solr` for examle.
-- Data Base placed on 192.168.<<network_id>>.13 and on 3306 port. You can connect to DB by vscode [extension](https://marketplace.visualstudio.com/items?itemName=formulahendry.vscode-mysql) or from `Adminer`
-
-### Drush usage
-
-Run in terminal: `docker exec my-project-php74 drush <drush-command>` for run drush command.
-If you change compose project name or php version in config replace `my-project-php74` to `<compose_project_name>-<phpversion>`.
-
-Use the next command in order to ran multiple Drush commands.
-
-```bash
-sudo ansible-playbook -vvv run-drush-commands.yml --connection=local
-````
-
-Change `drush_commands` variable in your `config.yml` file like this:
-
-```yaml
-drush_commands:
-  - 'updb'
-  - '-v sapi-r'
-  - '-v sapi-i'
-  - ...
-```
-
-## Development drupal-dockerizer
-
-### Prepare project structure
-
-- `db`: create this directory and download database dump here if exists.
-- `code`: clone your project files into this directory.
-- `drupal-dockerizer`: clone drupal-dockerizer project in this directory.
-- `files`: create the directory and pull Drupal assets here
-
-### Prepare your config for Drupal Dockerizer
-
-```bash
-cd drupal-dockerizer
-cp default.config.yml config.yml
-```
-
-### Start local environment
-
-```bash
-cd drupal-dockerizer
+cd ~/Projects/drupal9/drupal-dockerizer
 ansible-playbook main.yml --ask-become-pass
-ansible-playbook run-drush-commands.yml
+ansible-playbook drush-commands.yml
 ```
 
-### Import database from dump
+As a result you should receive the next directory structure:
 
 ```bash
-cd drupal-dockerizer
-ansible-playbook db.yml
+.
+├── composer.json
+├── composer.lock
+├── drupal-dockerizer
+│   ├── CONFIG.md
+│   ├── LICENSE
+│   ├── README.md
+│   ├── ansible.cfg
+│   ├── db.yml
+│   ├── default.config.yml
+│   ├── drupal9
+│   ├── drush-commands.yml
+│   ├── inventory
+│   ├── main.yml
+│   ├── requirements.yml
+│   ├── reset.yml
+│   ├── stop.yml
+│   ├── tasks
+│   ├── templates
+│   └── up.yml
+├── drupal-dockerizer.yml
+├── vendor
+│   └── ...
+└── web
+    ├── index.php
+    └── ...
 ```
 
-## FAQ
+You are done. You can access your fresh Drupal 9 site by visiting your IP address on port 8090.
 
-### How to reset everything and start from scratch?
+### How does it work internally?
+
+There is no magic! It is just a `docker-compose.yml` file. You can find it inside the `drupal-dockerizer` directory.
 
 ```bash
-cd drupal-dockerizer
+.
+├── drupal-dockerizer
+│   ├── drupal9
+│   │   └── docker-compose.yml ←
+│   └── ...
+├── drupal-dockerizer.yml
+├── vendor
+│   └── ...
+└── web
+    ├── index.php
+    └── ...
+```
+
+```bash
+cat ~/Projects/drupal9/drupal-dockerizer/drupal9/docker-compose.yml
+```
+
+Now you can use standard Docker Compose to manage your installation.
+
+All the configuration is done via `drupal-dockerizer.yml` config file. You can find a lot of examples by exploring tests. Take a look at [.github/workflows](.github/workflows).
+
+### Playbooks for controlling your projects
+
+Drupal Dockerizer is shipped with additional Ansible playbooks to help you automate your routine tasks. Make sure you are running those playbooks inside the `drupal-dockerizer` directory. The place where playbook files actually live.
+
+Each new project should start with running `main.yml` playbook which prepares configuration.
+
+### Stop containers
+
+To stop your containers and save the data you can use the `stop.yml` playbook. It's an equivalent of `docker-compose stop` command.
+
+```bash
+ansible-playbook stop.yml
+```
+
+### Up containers
+
+To spin up your containers you can use the `up.yml` playbook. It's an equivalent of `docker-compose up` command.
+
+```bash
+ansible-playbook up.yml
+```
+
+### Remove containers and their data
+
+To remove everything and start from scratch you can use `reset.yml` playbook. It's an equivalent of `docker-compose down` command. This command will not remove your code. Please, note this command requires `sudoers` permissions.
+
+```bash
 ansible-playbook reset.yml --ask-become-pass
 ```
 
-### How to clear Docker cache?
+After resetting your environment you have to run `main.yml` playbook again to spin up your environment.
+
+### How to run commands inside containers
+
+Plese, run `docker ps` to see your Docker container names.
 
 ```bash
-docker system prune -a -f
+docker exec drupal9-7.4-develop drush status
 ```
 
-### How to enhance MacOS performance?
+### How to access log files
 
-- make sure your `config.yml` contains `docker_cached_volume: true`
-- make sure you add more resources to Docker via Preferences -> Recources
-- make sure you set `debug` to `false` in Docker Engine preferences
+Apache2 and MySQL log files are exposed as volumes, so you can access them by
+reading the files on your host machine.
+
+```bash
+cat drupal9/logs/apache2/error.log
+```
+
+### Import MySQL database from dump
+
+There is a playbook which automates database import into database container.
+By default it just picks up the `dump.sql` file from the Drupal root directory.
+
+```bash
+.
+├── drupal-dockerizer.yml
+├── dump.sql ←
+└── ...
+```
+
+```bash
+ansible-playbook db.yml
+```
+
+If your database dump was placed somewhere in another directory you can change configuration by adding the line to `drupal-dockerizer.yml` file.
+
+```yml
+db_dump_path: /path/to/your/dump.sql
+```
+
+### Automate this with Drush commands
+
+There is `drush-commands.yml` playbook which will execute all the Drush commands which are described in `drupal-dockerizer.yml` file. Each new command should go to the new line.
+
+```yml
+drush_commands:
+  - cr
+  - status
+```
+
+## Credits
+
+Drupal Dockerizer was created and is maintained with :heart: by Drupal Dockerizer team and [Jet.Dev](https://jet.dev/).
