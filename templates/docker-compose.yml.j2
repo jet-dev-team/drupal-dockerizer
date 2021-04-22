@@ -87,7 +87,7 @@ services:
       context: "./bin/solr"
     volumes:
 {% if solr_version != 4%}
-      - ./data/solr:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+      {# - ./data/solr:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }} #}
       - ./data/solr_data:/var/solr
       - ./data/solr:/var/solr/data/{{ solr_core_name }}
 {% else %}
