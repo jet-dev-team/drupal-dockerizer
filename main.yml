@@ -45,6 +45,10 @@
     - name: Include Docker up tasks
       include: tasks/docker-up.yml
 
+    - name: Include Solr copy core task
+      include: tasks/solr-core-setup.yml
+      when: solr
+
     - name: Include Memcache setup tasks
       include: tasks/memcache-setup.yml
       when: memcache

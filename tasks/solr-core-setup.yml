@@ -1,0 +1,7 @@
+---
+
+
+- name: Copy solr core setup.
+  command: docker cp /data/solr {{ compose_project_name }}-solr:/var/solr/data/{{ solr_core_name }}
+  args:
+    chdir: "{{ docker_runtime_dir }}"
