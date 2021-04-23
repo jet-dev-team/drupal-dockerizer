@@ -71,6 +71,7 @@
     group: "{{user_gid|int}}"
 
 - name: Check owner for solr data dir.
+  when: solr_version == 8
   file:
     recurse: yes
     path: "{{ docker_runtime_dir }}/data/solr_data"
