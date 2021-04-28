@@ -11,6 +11,9 @@
       with_fileglob:
         - ../drupal-dockerizer.yml
 
+    - name: Include prefilight tasks
+      include: tasks/preflight.yml
+
   roles: []
 
   tasks:
