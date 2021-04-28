@@ -16,7 +16,7 @@
     port: 80
     state: stopped
     timeout: 3
-    msg: "IP address is already in use. Please, set another address in your config."
+    msg: "IP address {{ static_docker_ip } is already in use. Please, set another address in your config."
   when: preflight__composer_project.stdout|string|length == 0 and static_docker_ip|string|length > 0
 
 - name: Check http port is open
