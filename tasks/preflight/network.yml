@@ -1,0 +1,38 @@
+---
+
+- name: Check if project is up
+  shell: >
+    docker ps
+    --filter "label=com.docker.compose.project" -q |
+    xargs docker inspect --format={% raw %}'{{index .Config.Labels "com.docker.compose.project"}}'{% endraw %} |
+    sort |
+    uniq |
+    grep {{ compose_project_name }} || true
+  register: preflight__composer_project
+
+- name: Check static ip is open
+  wait_for:
+    host: "{{ static_docker_ip }}"
+    port: 80
+    state: stopped
+    timeout: 3
+    msg: "IP address is already in use. Please, set another address in your config."
+  when: preflight__composer_project.stdout|string|length == 0 and static_docker_ip|string|length > 0
+
+- name: Check http port is open
+  wait_for:
+    host: localhost
+    port: "{{ expose_http_port|int|string }}"
+    state: stopped
+    timeout: 3
+    msg: "Port {{ expose_http_port|int|string }} is already in use. Please, set another port in your config."
+  when: preflight__composer_project.stdout|string|length == 0 and expose_http_port|int > 0
+
+- name: Check https port is open
+  wait_for:
+    host: localhost
+    port: "{{ expose_https_port|int|string }}"
+    state: stopped
+    timeout: 3
+    msg: "Port {{ expose_https_port|int|string }} is already in use. Please, set another port in your config."
+  when: preflight__composer_project.stdout|string|length == 0 and expose_https_port|int > 0

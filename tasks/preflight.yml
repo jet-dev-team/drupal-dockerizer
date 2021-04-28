@@ -8,3 +8,4 @@
   set_fact: preflight__failed_message=""
 
 - include: preflight/docker-group.yml
+- include: preflight/network.yml
