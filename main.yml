@@ -35,9 +35,9 @@
       when: solr
       include: tasks/solr-setup.yml
 
-    - name: Include Advanced Networking setup tasks
-      when: advanced_networking
-      include: tasks/advanced-networking-setup.yml
+    - name: Include Local hosts setup tasks
+      when: static_docker_ip|string|length > 0 and domain_name|string|length > 0
+      include: tasks/local-hosts-setup.yml
 
     - name: Include Settings setup tasks
       include: tasks/settings-setup.yml

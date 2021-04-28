@@ -1,0 +1,15 @@
+---
+
+- name: Add Host name to /etc/hosts
+  become: true
+  blockinfile:
+    marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
+    path: /etc/hosts
+    block: |
+      {% set ip_part = '.'.join(static_docker_ip.split('.')[:3]) %}
+      {{ ip_part }}.10 {{ domain_name }}
+      {{ ip_part }}.11 adminer.{{ domain_name }}
+      {% if solr %}
+      {{ ip_part }}.12 solr.{{ domain_name }}
+      {% endif %}
+      {{ ip_part }}.13 db.{{ domain_name }}

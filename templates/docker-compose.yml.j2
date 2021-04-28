@@ -1,4 +1,7 @@
 version: '3.7'
+{% if static_docker_ip|string|length > 0 %}
+{% set ip_part = '.'.join(static_docker_ip.split('.')[:3]) %}
+{% endif %}
 
 services:
 {% if memcache %}
@@ -6,7 +9,7 @@ services:
     image: memcached
     restart: 'always'
     container_name: '{{ compose_project_name }}-memcached'
-{% if advanced_networking %}
+{% if static_docker_ip|string|length > 0 %}
     networks:
       - {{ compose_project_name }}-network
 {% endif %}
@@ -25,11 +28,11 @@ services:
       - memcached
 {% endif %}
       - database
-{% if not advanced_networking %}
+{% if expose_http_port|string|length > 0 %}
     ports:
-      - "{{ port }}:80"
-{% if ssl_enabled %}
-      - "{{ ssl_port }}:443"
+      - "{{ expose_http_port }}:80"
+{% if ssl_enabled and expose_https_port|string|length > 0 %}
+      - "{{ expose_https_port }}:443"
 {% endif %}
 {% endif %}
     links:
@@ -51,10 +54,10 @@ services:
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
     environment:
       XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
-{% if advanced_networking %}
+{% if static_docker_ip|string|length > 0 %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.10
+        ipv4_address: {{ ip_part }}.10
 {% endif %}
 
   database:
@@ -73,10 +76,10 @@ services:
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
       MYSQL_PASSWORD: {{ mysql_password }}
-{% if advanced_networking %}
+{% if static_docker_ip|string|length > 0 %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.13
+        ipv4_address: {{ ip_part }}.13
 {% endif %}
 
 {% if solr %}
@@ -91,10 +94,10 @@ services:
 {% else %}
       - ./data/solr:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
 {% endif %}
-{% if advanced_networking %}
+{% if static_docker_ip|string|length > 0 %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.12
+        ipv4_address: {{ ip_part }}.12
 {% endif %}
 {% endif %}
 
@@ -103,12 +106,12 @@ services:
     image: adminer
     container_name: '{{ compose_project_name }}-adminer'
     restart: always
-{% if advanced_networking %}
+{% if static_docker_ip|string|length > 0 %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.11
+        ipv4_address: {{ ip_part }}.11
 {% endif %}
-{% if not advanced_networking %}
+{% if not static_docker_ip|string|length > 0 %}
     ports:
       - "{{ adminer_port }}:8080"
 {% endif %}
@@ -116,12 +119,12 @@ services:
       - database
 {% endif %}
 
-{% if advanced_networking %}
+{% if static_docker_ip|string|length > 0 %}
 networks:
   {{ compose_project_name }}-network:
     driver: bridge
     ipam:
       driver: default
       config:
-        - subnet: 192.168.{{ network_id }}.0/28
+        - subnet: {{ ip_part }}.0/28
 {% endif %}
