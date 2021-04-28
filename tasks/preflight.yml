@@ -3,7 +3,7 @@
 
 - name: Welcome onboard!
   debug:
-    msg: Hey {{ ansible_user }}! We are about to start configuring Drupal Dockerizer on {{ ansible_host }}. Now will start checking if everything is OK.
+    msg: We are about to start configuring Drupal Dockerizer on {{ ansible_host }}. Now will start checking if everything is OK.
 
 - name: Set default failed message
   set_fact: preflight__failed_message=""
