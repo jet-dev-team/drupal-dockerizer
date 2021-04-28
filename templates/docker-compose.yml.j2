@@ -1,6 +1,6 @@
 version: '3.7'
-{% if static_docker_ip is not none %}
-{% set ip_part = '.'.join(static_docker_ip.split('.')[:3]) %}
+{% if docker_network_gateway_ip is not none %}
+{% set ip_part = '.'.join(docker_network_gateway_ip.split('.')[:3]) %}
 {% endif %}
 
 services:
@@ -9,7 +9,7 @@ services:
     image: memcached
     restart: 'always'
     container_name: '{{ compose_project_name }}-memcached'
-{% if static_docker_ip is not none %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       - {{ compose_project_name }}-network
 {% endif %}
@@ -52,7 +52,7 @@ services:
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
     environment:
       XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
-{% if static_docker_ip is not none %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: {{ ip_part }}.10
@@ -79,7 +79,7 @@ services:
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
       MYSQL_PASSWORD: {{ mysql_password }}
-{% if static_docker_ip is not none %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: {{ ip_part }}.13
@@ -97,7 +97,7 @@ services:
 {% else %}
       - ./data/solr:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
 {% endif %}
-{% if static_docker_ip is not none %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: {{ ip_part }}.12
@@ -109,12 +109,12 @@ services:
     image: adminer
     container_name: '{{ compose_project_name }}-adminer'
     restart: always
-{% if static_docker_ip is not none %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
         ipv4_address: {{ ip_part }}.11
 {% endif %}
-{% if static_docker_ip is none %}
+{% if docker_network_gateway_ip is none %}
     ports:
       - "{{ adminer_port }}:8080"
 {% endif %}
@@ -122,7 +122,7 @@ services:
       - database
 {% endif %}
 
-{% if static_docker_ip is not none %}
+{% if docker_network_gateway_ip is not none %}
 networks:
   {{ compose_project_name }}-network:
     driver: bridge

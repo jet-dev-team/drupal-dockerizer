@@ -6,7 +6,7 @@
     marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
     path: /etc/hosts
     block: |
-      {% set ip_part = '.'.join(static_docker_ip.split('.')[:3]) %}
+      {% set ip_part = '.'.join(docker_network_gateway_ip.split('.')[:3]) %}
       {{ ip_part }}.10 {{ domain_name }}
       {{ ip_part }}.11 adminer.{{ domain_name }}
       {% if solr %}

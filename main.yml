@@ -39,7 +39,7 @@
       include: tasks/solr-setup.yml
 
     - name: Include Local hosts setup tasks
-      when: static_docker_ip is not none and domain_name is not none
+      when: docker_network_gateway_ip is not none and domain_name is not none
       include: tasks/local-hosts-setup.yml
 
     - name: Include Settings setup tasks

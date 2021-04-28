@@ -12,12 +12,12 @@
 
 - name: Check static ip is open
   wait_for:
-    host: "{{ static_docker_ip }}"
+    host: "{{ docker_network_gateway_ip }}"
     port: 80
     state: stopped
     timeout: 3
-    msg: "IP address {{ static_docker_ip }} is already in use. Please, set another address in your config."
-  when: preflight__composer_project.stdout|string|length == 0 and static_docker_ip is not none
+    msg: "IP address {{ docker_network_gateway_ip }} is already in use. Please, set another address in your config."
+  when: preflight__composer_project.stdout|string|length == 0 and docker_network_gateway_ip is not none
 
 - name: Check http port is open
   wait_for:

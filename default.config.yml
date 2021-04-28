@@ -26,7 +26,7 @@ ssl_key_path: /var/data/ssl/privkey.pem
 # Look at available options here: https://hub.docker.com/r/jetdevteam/drupal-php-apache/tags?page=1&ordering=last_updated
 phpversion: 7.4-develop
 
-static_docker_ip:
+docker_network_gateway_ip:
 domain_name: drupal.devel
 
 # Enviroment variable for php xdebug extensions
@@ -34,7 +34,7 @@ xdebug_enviroment: >
   remote_enable=1
   remote_connect_back=1
   remote_port=9008
-  remote_host={{ static_docker_ip }}
+  remote_host={{ docker_network_gateway_ip }}
   show_error_trace=0
   show_local_vars=1
   remote_autostart=1
