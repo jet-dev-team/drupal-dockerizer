@@ -60,7 +60,7 @@ compose_project_name: drupal9
 user_uid: `id -u`
 user_gid: `id -g`
 drupal_root_dir: $HOME/Projects/drupal9
-port: 8090
+expose_http_port: 8090
 EOT
 
 cd ~/Projects/drupal9/drupal-dockerizer
@@ -81,7 +81,7 @@ As a result you should receive the next directory structure:
 │   ├── ansible.cfg
 │   ├── db.yml
 │   ├── default.config.yml
-│   ├── drupal9
+│   ├── runtime-drupal9
 │   ├── drush-commands.yml
 │   ├── inventory
 │   ├── main.yml
@@ -108,7 +108,7 @@ There is no magic! It is just a `docker-compose.yml` file. You can find it insid
 ```bash
 .
 ├── drupal-dockerizer
-│   ├── drupal9
+│   ├── runtime-drupal9
 │   │   └── docker-compose.yml ←
 │   └── ...
 ├── drupal-dockerizer.yml
