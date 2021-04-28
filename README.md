@@ -39,9 +39,16 @@ Let’s install requirements.
 
 ```bash
 apt update
-apt -y install ansible docker.io docker-compose composer git unzip
-
+apt -y install ansible composer git unzip docker.io
 systemctl enable --now docker.service
+```
+
+Install latest `docker-compose`. Ubuntu repository has a little bit outdated version.
+Read more here: https://docs.docker.com/compose/install/.
+
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 Now you are able to connect to your server with your SSH keys or just use `su $USERNAME` to log into your user account to start configuring Drupal Dockerizer.
