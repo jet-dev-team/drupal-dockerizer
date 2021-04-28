@@ -40,6 +40,7 @@ jobs:
         echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
+        echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "db_dump_path: $GITHUB_WORKSPACE/web/dump.sql" >> drupal-dockerizer.yml
 
     - name: Run main playbook

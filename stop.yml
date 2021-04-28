@@ -16,6 +16,6 @@
   tasks:
 
     - name: Stop all Docker containers.
-      command: docker-compose stop
+      command: docker-compose -p {{ compose_project_name }} stop
       args:
         chdir: "{{ docker_runtime_dir }}"
