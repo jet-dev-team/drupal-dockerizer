@@ -24,10 +24,8 @@ services:
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
     depends_on:
-{% if memcache %}
-      - memcached
-{% endif %}
-      - database
+      database:
+        condition: service_healthy
 {% if expose_http_port|string|length > 0 %}
     ports:
       - "{{ expose_http_port }}:80"
@@ -66,6 +64,11 @@ services:
     container_name: '{{ compose_project_name }}-database'
 {% if database == "mysql" %}
     command: --max_allowed_packet=1048576000 --skip-grant-tables
+    healthcheck:
+      test: ["CMD-SHELL", 'mysql --database=mysql --password={{ mysql_root_password }} --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
+      interval: 3s
+      timeout: 30s
+      retries: 10
 {% endif %}
     restart: 'always'
     volumes:
