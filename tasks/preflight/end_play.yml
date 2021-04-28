@@ -1,0 +1,6 @@
+---
+
+- name: Print message why the start is failing
+  failed_when: preflight__failed_message|string|length > 0
+  debug:
+    msg: "The run has been aborted due to the next reason: {{ preflight__failed_message }}"
