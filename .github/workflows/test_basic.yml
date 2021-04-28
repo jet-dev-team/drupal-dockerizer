@@ -42,12 +42,8 @@ jobs:
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
 
     - name: Run main playbook
-      uses: dawidd6/action-ansible-playbook@v2
-      with:
-        playbook: main.yml
-        directory: .drupal-dockerizer
-        options: |
-          --verbose
+      run: ansible-playbook -vv main.yml
+      working-directory: .drupal-dockerizer
 
     - name: Run drush-commands playbook
       uses: dawidd6/action-ansible-playbook@v2
