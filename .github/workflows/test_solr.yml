@@ -63,16 +63,16 @@ jobs:
           --verbose
 
     - name: Enable search_api and devel_generator in database
-      run: docker exec drupal-project-7.4-develop drush en devel_generate search_api_solr -y
+      run: docker exec drupal-project-webserver drush en devel_generate search_api_solr -y
 
     - name: Copy Drupal configs for solr
       run: mkdir web/solr_drupal_configs && cp -R .drupal-dockerizer/.github/data/solr_drupal_configs/* web/solr_drupal_configs/
 
     - name: Import Drupal configs for solr
-      run: docker exec drupal-project-7.4-develop drush config:import --diff --partial --source=solr_drupal_configs
+      run: docker exec drupal-project-webserver drush config:import --diff --partial --source=solr_drupal_configs
 
     - name: Generate solr config
-      run: docker exec drupal-project-7.4-develop drush solr-gsc solr config.zip 8.8
+      run: docker exec drupal-project-webserver drush solr-gsc solr config.zip 8.8
 
     - name: Unzip solr configuration.
       run: unzip web/config.zip -d solr_configuration
@@ -93,13 +93,13 @@ jobs:
       run: docker logs drupal-project-solr
 
     - name: Generate random nodes
-      run: docker exec drupal-project-7.4-develop drush devel-generate:content -y
+      run: docker exec drupal-project-webserver drush devel-generate:content -y
 
     - name: Index nodes
-      run: docker exec drupal-project-7.4-develop drush -vv sapi-i
+      run: docker exec drupal-project-webserver drush -vv sapi-i
 
     - name: Check search indexes works.
-      run: docker exec drupal-project-7.4-develop drush sapi-search node Dolore
+      run: docker exec drupal-project-webserver drush sapi-search node Dolore
 
     - name: settings.php should have solr config
       run: cat web/sites/default/settings.php | grep "solr"
