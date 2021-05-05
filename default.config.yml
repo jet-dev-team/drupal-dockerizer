@@ -32,6 +32,8 @@ domain_name: drupal.devel
 
 # Enviroment variable for php xdebug extensions
 xdebug_install: false
+# Availible versions https://pecl.php.net/package/xdebug
+xdebug_version: 2.9.6
 xdebug_enviroment: >
   remote_enable=1
   remote_connect_back=0
