@@ -1,0 +1,112 @@
+name: Check solr functionality
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  test_solr:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Cache Composer dependencies for improve speed
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-drupal
+
+    - name: Get Drupal Project repository
+      uses: actions/checkout@v2
+      with:
+        repository: 'drupal/recommended-project'
+        path: './'
+        ref: '9.2.x'
+
+    - name: Run Composer install
+      run: composer install --ignore-platform-reqs
+
+    - name: Add required modules to Drupal
+      run: composer require drupal/search_api_solr drupal/devel drush/drush --ignore-platform-reqs
+
+    - name: Get Drupal Dockerizer repository
+      uses: actions/checkout@v2
+      with:
+        path: '.drupal-dockerizer'
+
+    - name: Create basic drupal-dockerizer.yml
+      run: |
+        echo "---" > drupal-dockerizer.yml
+        echo "" >> drupal-dockerizer.yml
+        echo "compose_project_name: drupal-project" >> drupal-dockerizer.yml
+        echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
+        echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
+        echo "expose_http_port: 80" >> drupal-dockerizer.yml
+        echo "solr_configs_path: $GITHUB_WORKSPACE/solr_configuration" >> drupal-dockerizer.yml
+        echo "solr_version: 8" >> drupal-dockerizer.yml
+
+    - name: Run main playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Run drush-commands playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: drush-commands.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Enable search_api and devel_generator in database
+      run: docker exec drupal-project-webserver drush en devel_generate search_api_solr -y
+
+    - name: Copy Drupal configs for solr
+      run: mkdir web/solr_drupal_configs && cp -R .drupal-dockerizer/.github/data/solr_drupal_configs/* web/solr_drupal_configs/
+
+    - name: Import Drupal configs for solr
+      run: docker exec drupal-project-webserver drush config:import --diff --partial --source=solr_drupal_configs
+
+    - name: Generate solr config
+      run: docker exec drupal-project-webserver drush solr-gsc solr config.zip 8.8
+
+    - name: Unzip solr configuration.
+      run: unzip web/config.zip -d solr_configuration
+
+    - name: Enable solr in drupal-dockerizer.yml
+      run: |
+        echo "solr: true" >> drupal-dockerizer.yml
+
+    - name: Run main playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Get solr logs
+      run: docker logs drupal-project-solr
+
+    - name: Wait for Solr
+      run: sleep 10;
+
+    - name: Generate random nodes
+      run: docker exec drupal-project-webserver drush devel-generate:content -y
+
+    - name: Index nodes
+      run: docker exec drupal-project-webserver drush -vv sapi-i
+
+    - name: Check search indexes works.
+      run: docker exec drupal-project-webserver drush sapi-search node Dolore
+
+    - name: settings.php should have solr config
+      run: cat web/sites/default/settings.php | grep "solr"
+
+    - name: Check Drupal
+      run: curl http://localhost | grep "Drupal"

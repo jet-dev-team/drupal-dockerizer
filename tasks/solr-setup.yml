@@ -37,7 +37,7 @@
 - name: Create solr data directory
   file:
     recurse: yes
-    path: "{{ docker_runtime_dir }}/data/solr"
+    path: "{{ docker_runtime_dir }}/data/solr_core"
     state: directory
     owner: "{{user_uid|int}}"
     group: "{{user_gid|int}}"
@@ -54,18 +54,27 @@
 - name: Ensure Solr Core file is present.
   template:
     src: templates/solr.core.j2
-    dest: "{{ docker_runtime_dir }}/data/solr/core.properties"
+    dest: "{{ docker_runtime_dir }}/data/solr_core/core.properties"
     mode: '644'
     owner: "{{user_uid|int}}"
     group: "{{user_gid|int}}"
 
 - name: Copy drupal solr config.
-  command: cp -r "{{ solr_configs_path }}"/. "{{ docker_runtime_dir }}/data/solr/conf"
+  command: cp -r "{{ solr_configs_path }}"/. "{{ docker_runtime_dir }}/data/solr_core/conf"
 
 - name: Check owner for conf dir.
   file:
     recurse: yes
-    path: "{{ docker_runtime_dir }}/data/solr/conf"
+    path: "{{ docker_runtime_dir }}/data/solr_core/conf"
+    state: directory
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Check owner for solr data dir.
+  when: solr_version == 8
+  file:
+    recurse: yes
+    path: "{{ docker_runtime_dir }}/data/solr_data"
     state: directory
     owner: "{{user_uid|int}}"
     group: "{{user_gid|int}}"
