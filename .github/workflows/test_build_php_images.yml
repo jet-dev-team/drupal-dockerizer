@@ -35,7 +35,9 @@ jobs:
       with:
         path: '.drupal-dockerizer'
 
-    - name: Create basic drupal-dockerizer.yml for php{{ matrix.php_version }}-apache
+    - name: Create basic drupal-dockerizer.yml for php${{ matrix.php_version }}-apache
+      env:
+        PHP_VERSION: ${{ matrix.php_version }}
       run: |
         echo "---" > drupal-dockerizer.yml
         echo "" >> drupal-dockerizer.yml
@@ -44,10 +46,12 @@ jobs:
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
-        echo "php_image: php{{ matrix.php_version }}-apache" >> drupal-dockerizer.yml
+        echo "php_image: php$PHP_VERSION-apache" >> drupal-dockerizer.yml
 
     - name: Build php apache {{ matrix.php_version }} image
-      run: docker build -t php{{ matrix.php_version }}-apache - < .drupal-dockerizer/images/php-apache/{{ matrix.php_version }}-apache.Dockerfile
+      env:
+        PHP_VERSION: ${{ matrix.php_version }}
+      run: docker build -t php$PHP_VERSION-apache - < .drupal-dockerizer/images/php-apache/$PHP_VERSION-apache.Dockerfile
 
     - name: Run main playbook
       uses: dawidd6/action-ansible-playbook@v2
@@ -65,6 +69,6 @@ jobs:
         options: |
           --verbose
 
-    - name: Check Drupal on php {{ matrix.php_version }} version
+    - name: Check Drupal on php ${{ matrix.php_version }} version
       run: curl http://localhost | grep "Drupal"
 
