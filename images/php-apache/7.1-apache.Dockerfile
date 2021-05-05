@@ -99,17 +99,3 @@ RUN echo "apc.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
 
 # Cleanup
 RUN rm -rf /usr/src/*
-
-# Create dockerizer user
-RUN useradd -ms /bin/bash dockerizer
-RUN groupmod --gid 1000 dockerizer && usermod --uid 1000 --gid 1000 dockerizer
-
-RUN chmod +x /usr/local/bin/docker-php-entrypoint
-
-RUN chown -R dockerizer:dockerizer /var/www
-
-RUN echo dockerizer ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/dockerizer
-RUN chmod 0440 /etc/sudoers.d/dockerizer
-
-ENV APACHE_RUN_USER dockerizer
-ENV APACHE_RUN_GROUP dockerizer
