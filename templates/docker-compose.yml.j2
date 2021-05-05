@@ -98,7 +98,7 @@ services:
       - ./data/solr_data:/var/solr
 {% elif solr_version != 4 %}
       - ./data/solr_core:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
-{% else %}
+{% elif solr_version == 4 %}
       - ./data/solr_core:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
 {% endif %}
 {% if docker_network_gateway_ip is not none %}

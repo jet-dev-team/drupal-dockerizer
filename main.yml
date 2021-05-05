@@ -50,7 +50,7 @@
 
     - name: Include Solr copy core task
       include: tasks/solr-core-setup.yml
-      when: solr
+      when: solr and solr_version == 8
 
     - name: Include Memcache setup tasks
       include: tasks/memcache-setup.yml
