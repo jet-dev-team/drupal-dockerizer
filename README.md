@@ -150,7 +150,7 @@ ansible-playbook stop.yml
 
 ### Remove containers and their data
 
-To remove everything and start from scratch you can use `clean.yml` playbook. It's an equivalent of `docker-compose down` command. This command will not remove your code. Please, note this command requires `sudoers` permissions.
+To remove everything and start from scratch you can use `clean.yml` playbook. This command will not remove your code. Please, note this command requires `sudoers` permissions.
 
 ```bash
 ansible-playbook clean.yml --ask-become-pass
