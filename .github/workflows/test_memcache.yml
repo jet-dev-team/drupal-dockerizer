@@ -42,6 +42,7 @@ jobs:
         echo "compose_project_name: drupal-project" >> drupal-dockerizer.yml
         echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
+        echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
 
     - name: Run main playbook
@@ -61,7 +62,7 @@ jobs:
           --verbose
 
     - name: Enable memcache in database
-      run: docker exec drupal-project-7.4-develop drush en memcache memcache_admin -y
+      run: docker exec drupal-project-webserver drush en memcache memcache_admin -y
 
     - name: Stop containers
       uses: dawidd6/action-ansible-playbook@v2

@@ -1,0 +1,13 @@
+---
+
+- name: Check if user in docker group
+  shell: groups | grep docker || true
+  register: preflight__docker_group
+
+- name: Set failed message
+  set_fact: preflight__failed_message="In order to manage Docker the user should be in 'docker' group. Please, add your user to docker group."
+  when: preflight__docker_group.stdout|string|length == 0
+
+- name: Include end_play
+  include: ./end_play.yml
+

@@ -1,0 +1,86 @@
+name: Check php images build
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.Dockerfile'
+  workflow_dispatch:
+
+jobs:
+  test_images_build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        include:
+        - php_version: '7.1'
+          drupal_version: '8.6.18'
+        - php_version: '7.2'
+          drupal_version: '8.7.14'
+        - php_version: '7.3'
+          drupal_version: '8.9.14'
+        - php_version: '7.4'
+          drupal_version: '9.1.7'
+        - php_version: '8.0'
+          drupal_version: '9.1.7'
+    steps:
+    - name: Cache Composer dependencies for improve speed
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-drupal
+
+    - name: Get Drupal tarball
+      run: |
+        wget https://ftp.drupal.org/files/projects/drupal-${{ matrix.drupal_version }}.tar.gz
+        tar xvf drupal-${{ matrix.drupal_version }}.tar.gz
+        mv drupal-${{ matrix.drupal_version }} drupal-tarball
+
+    - name: Get Drupal Dockerizer repository
+      uses: actions/checkout@v2
+      with:
+        path: '.drupal-dockerizer'
+
+    - name: Create basic drupal-dockerizer.yml for php${{ matrix.php_version }}-apache
+      env:
+        PHP_VERSION: ${{ matrix.php_version }}
+      run: |
+        echo "---" > drupal-dockerizer.yml
+        echo "" >> drupal-dockerizer.yml
+        echo "compose_project_name: drupal-project" >> drupal-dockerizer.yml
+        echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
+        echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE/drupal-tarball" >> drupal-dockerizer.yml
+        echo "drupal_web_root: ./" >> drupal-dockerizer.yml
+        echo "expose_http_port: 80" >> drupal-dockerizer.yml
+        echo "php_image: php$PHP_VERSION-apache" >> drupal-dockerizer.yml
+        echo "drush_commands:" >> drupal-dockerizer.yml
+        echo "  - cc drush" >> drupal-dockerizer.yml
+        echo "  - site-install standard install_configure_form.enable_update_status_module=NULL" >> drupal-dockerizer.yml
+        echo "  - cr" >> drupal-dockerizer.yml
+
+
+    - name: Build php apache ${{ matrix.php_version }} image
+      env:
+        PHP_VERSION: ${{ matrix.php_version }}
+      run: docker build -t php$PHP_VERSION-apache - < .drupal-dockerizer/images/php-apache/$PHP_VERSION-apache.Dockerfile
+
+    - name: Run main playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: main.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Run drush-commands playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: drush-commands.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Check Drupal on php ${{ matrix.php_version }} version
+      run: curl http://localhost | grep "Drupal"
+

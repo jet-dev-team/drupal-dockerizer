@@ -40,8 +40,7 @@ jobs:
         echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
-        echo "advanced_networking: true" >> drupal-dockerizer.yml
-        echo "network_id: 15" >> drupal-dockerizer.yml
+        echo "docker_network_gateway_ip: 192.167.22.1" >> drupal-dockerizer.yml
         echo "domain_name: drupal.devel" >> drupal-dockerizer.yml
 
     - name: Run main playbook
