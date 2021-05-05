@@ -43,7 +43,7 @@ jobs:
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "php_image: php7.4-apache" >> drupal-dockerizer.yml
 
-    - name: Build php apache 7.4 container
+    - name: Build php apache 7.4 image
       run: docker build -t php7.4-apache - < .drupal-dockerizer/images/php-apache/7.4-apache.Dockerfile
 
     - name: Run main playbook
@@ -76,7 +76,7 @@ jobs:
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "php_image: php7.3-apache" >> drupal-dockerizer.yml
 
-    - name: Build php apache 7.3 container
+    - name: Build php apache 7.3 image
       run: docker build -t php7.3-apache  - < .drupal-dockerizer/images/php-apache/7.3-apache.Dockerfile
 
     - name: Run main playbook
