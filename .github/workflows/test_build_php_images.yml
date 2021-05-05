@@ -12,7 +12,17 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php_version: ['7.1', '7.2', '7.3', '7.4', '8.0']
+        include:
+        - php_version: '7.1'
+          drupal_version: '8.7.x'
+        - php_version: '7.2'
+          drupal_version: '8.8.x'
+        - php_version: '7.3'
+          drupal_version: '8.9.x'
+        - php_version: '7.4'
+          drupal_version: '9.1.x'
+        - php_version: '8.0'
+          drupal_version: '9.2.x'
     steps:
     - name: Cache Composer dependencies for improve speed
       uses: actions/cache@v2
@@ -25,7 +35,7 @@ jobs:
       with:
         repository: 'drupal/recommended-project'
         path: './'
-        ref: '9.2.x'
+        ref: ${{ matrix.drupal_version }}
 
     - name: Run Composer install
       run: composer install --ignore-platform-reqs
