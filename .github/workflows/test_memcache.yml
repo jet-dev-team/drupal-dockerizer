@@ -62,7 +62,7 @@ jobs:
           --verbose
 
     - name: Enable memcache in database
-      run: docker exec drupal-project-7.4-develop drush en memcache memcache_admin -y
+      run: docker exec drupal-project-webserver drush en memcache memcache_admin -y
 
     - name: Stop containers
       uses: dawidd6/action-ansible-playbook@v2

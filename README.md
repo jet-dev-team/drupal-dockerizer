@@ -171,7 +171,7 @@ After resetting your environment you have to run `main.yml` playbook again to sp
 Plese, run `docker ps` to see your Docker container names.
 
 ```bash
-docker exec drupal9-7.4-develop drush status
+docker exec drupal9-webserver drush status
 ```
 
 ### How to access log files
