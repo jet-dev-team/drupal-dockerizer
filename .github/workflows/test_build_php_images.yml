@@ -54,6 +54,11 @@ jobs:
         echo "drupal_web_root: ./" >> drupal-dockerizer.yml
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "php_image: php$PHP_VERSION-apache" >> drupal-dockerizer.yml
+        echo "drush_commands:" >> drupal-dockerizer.yml
+        echo "  - cc drush" >> drupal-dockerizer.yml
+        echo "  - site-install standard install_configure_form.enable_update_status_module=NULL" >> drupal-dockerizer.yml
+        echo "  - cr" >> drupal-dockerizer.yml
+
 
     - name: Build php apache ${{ matrix.php_version }} image
       env:
