@@ -15,12 +15,12 @@
 
   tasks:
     - name: Stop all Docker containers.
-      command: docker-compose down
+      command: docker-compose -p {{ compose_project_name }} down
       args:
         chdir: "{{ docker_runtime_dir }}"
 
     - name: Kill all Docker containers.
-      command: docker-compose kill
+      command: docker-compose -p {{ compose_project_name }} kill
       args:
         chdir: "{{ docker_runtime_dir }}"
 

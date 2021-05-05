@@ -11,6 +11,9 @@
       with_fileglob:
         - ../drupal-dockerizer.yml
 
+    - name: Include prefilight tasks
+      include: tasks/preflight.yml
+
   roles: []
 
   tasks:
@@ -35,9 +38,9 @@
       when: solr
       include: tasks/solr-setup.yml
 
-    - name: Include Advanced Networking setup tasks
-      when: advanced_networking
-      include: tasks/advanced-networking-setup.yml
+    - name: Include Local hosts setup tasks
+      when: docker_network_gateway_ip is not none and domain_name is not none
+      include: tasks/local-hosts-setup.yml
 
     - name: Include Settings setup tasks
       include: tasks/settings-setup.yml
@@ -48,10 +51,6 @@
     - name: Include Memcache setup tasks
       include: tasks/memcache-setup.yml
       when: memcache
-
-    - name: Wait docker containers (MySQL) to up.
-      pause:
-        seconds: 30
 
     - name: Include import-database tasks.
       include: tasks/import-database.yml

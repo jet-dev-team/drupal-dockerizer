@@ -39,9 +39,16 @@ Let’s install requirements.
 
 ```bash
 apt update
-apt -y install ansible docker.io docker-compose composer git unzip
-
+apt -y install ansible composer git unzip docker.io
 systemctl enable --now docker.service
+```
+
+Install latest `docker-compose`. Ubuntu repository has a little bit outdated version.
+Read more here: https://docs.docker.com/compose/install/.
+
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 Now you are able to connect to your server with your SSH keys or just use `su $USERNAME` to log into your user account to start configuring Drupal Dockerizer.
@@ -60,7 +67,7 @@ compose_project_name: drupal9
 user_uid: `id -u`
 user_gid: `id -g`
 drupal_root_dir: $HOME/Projects/drupal9
-port: 8090
+expose_http_port: 8090
 EOT
 
 cd ~/Projects/drupal9/drupal-dockerizer
@@ -81,7 +88,7 @@ As a result you should receive the next directory structure:
 │   ├── ansible.cfg
 │   ├── db.yml
 │   ├── default.config.yml
-│   ├── drupal9
+│   ├── runtime-drupal9
 │   ├── drush-commands.yml
 │   ├── inventory
 │   ├── main.yml
@@ -108,7 +115,7 @@ There is no magic! It is just a `docker-compose.yml` file. You can find it insid
 ```bash
 .
 ├── drupal-dockerizer
-│   ├── drupal9
+│   ├── runtime-drupal9
 │   │   └── docker-compose.yml ←
 │   └── ...
 ├── drupal-dockerizer.yml
