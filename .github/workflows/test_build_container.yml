@@ -41,7 +41,7 @@ jobs:
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
-        echo "php_image: php7.4-apache"
+        echo "php_image: php7.4-apache" >> drupal-dockerizer.yml
 
     - name: Build php apache 7.4 container
       run: docker build -t php7.4-apache - < .drupal-dockerizer/images/php-apache/7.4-apache.Dockerfile
@@ -74,7 +74,7 @@ jobs:
         echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
-        echo "php_image: php7.3-apache"
+        echo "php_image: php7.3-apache" >> drupal-dockerizer.yml
 
     - name: Build php apache 7.3 container
       run: docker build -t php7.3-apache  - < .drupal-dockerizer/images/php-apache/7.3-apache.Dockerfile
