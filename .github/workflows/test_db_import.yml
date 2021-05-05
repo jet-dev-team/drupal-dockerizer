@@ -84,7 +84,7 @@ jobs:
     - name: Import DataBase
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: db.yml
+        playbook: import-database.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
