@@ -15,12 +15,7 @@
 
   tasks:
     - name: Stop all Docker containers.
-      command: docker-compose -p {{ compose_project_name }} down
-      args:
-        chdir: "{{ docker_runtime_dir }}"
-
-    - name: Kill all Docker containers.
-      command: docker-compose -p {{ compose_project_name }} kill
+      command: docker-compose -p {{ compose_project_name }} down --remove-orphans --volumes
       args:
         chdir: "{{ docker_runtime_dir }}"
 
@@ -33,7 +28,7 @@
     - name: Remove Host name from /etc/hosts
       become: true
       blockinfile:
-        marker: "<!-- {mark} {{ compose_project_name }} ANSIBLE MANAGED BLOCK -->"
+        marker: "<!-- {mark} {{ compose_project_name }} Drupal Dockerizer -->"
         state: absent
         path: /etc/hosts
         block: |

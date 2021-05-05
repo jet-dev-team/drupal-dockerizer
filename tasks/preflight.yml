@@ -9,3 +9,5 @@
 
 - include: preflight/docker-group.yml
 - include: preflight/network.yml
+- include: preflight/database-dump.yml
+  when: import_database

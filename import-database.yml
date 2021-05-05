@@ -14,5 +14,8 @@
 
   tasks:
 
+    - name: Include check dump exist task.
+      include: tasks/preflight/database-dump.yml
+
     - name: Include import-database tasks.
       include: tasks/import-database.yml

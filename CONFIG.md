@@ -35,9 +35,9 @@
 | mysql_user | mysql user name | docker |
 | mysql_password | mysql password | docker |
 | mysql_database | mysql databse name for drupal | drupal |
-| import_database | import database immediately after up docker containers by main.yml playbook. Ensure you have right path to sql dump | false |
+| import_database | import database immediately after up docker containers by up.yml playbook. Ensure you have right path to sql dump | false |
 | install_adminer |  Flag for setup adminer | false |
 | adminer_port | http port for admniner | 8080 |
-| run_drush_commands | run drush_commands immediately after up docker containers by main.yml playbook. | false |
+| run_drush_commands | run drush_commands immediately after up docker containers by up.yml playbook. | false |
 | drush_commands | Drush commands that run by run-drush-commands.yml playbook | ['cr', 'cc', 'si'] |
 | custom_drupal_settings | custom drupal settings. Inserting to end settings.php file | $settings['trusted_host_patterns'] = ['drupal.devel']; |

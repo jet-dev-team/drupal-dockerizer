@@ -43,10 +43,10 @@ jobs:
         echo "docker_network_gateway_ip: 192.167.22.1" >> drupal-dockerizer.yml
         echo "domain_name: drupal.devel" >> drupal-dockerizer.yml
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -78,10 +78,10 @@ jobs:
         echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> drupal-dockerizer.yml
         echo "ssl_enabled: true" >> drupal-dockerizer.yml
 
-    - name: Run main playbook with ssl configuration
+    - name: Run up playbook with ssl configuration
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose

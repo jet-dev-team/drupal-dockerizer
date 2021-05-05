@@ -71,7 +71,7 @@ expose_http_port: 8090
 EOT
 
 cd ~/Projects/drupal9/drupal-dockerizer
-ansible-playbook main.yml --ask-become-pass
+ansible-playbook up.yml --ask-become-pass
 ansible-playbook drush-commands.yml
 ```
 
@@ -91,9 +91,9 @@ As a result you should receive the next directory structure:
 │   ├── runtime-drupal9
 │   ├── drush-commands.yml
 │   ├── inventory
-│   ├── main.yml
+│   ├── up.yml
 │   ├── requirements.yml
-│   ├── reset.yml
+│   ├── clean.yml
 │   ├── stop.yml
 │   ├── tasks
 │   ├── templates
@@ -138,7 +138,7 @@ All the configuration is done via `drupal-dockerizer.yml` config file. You can f
 
 Drupal Dockerizer is shipped with additional Ansible playbooks to help you automate your routine tasks. Make sure you are running those playbooks inside the `drupal-dockerizer` directory. The place where playbook files actually live.
 
-Each new project should start with running `main.yml` playbook which prepares configuration.
+Each new project should start with running `up.yml` playbook which prepares configuration and up containers. It's an equivalent of `docker-compose up` command.
 
 ### Stop containers
 
@@ -148,23 +148,15 @@ To stop your containers and save the data you can use the `stop.yml` playbook. I
 ansible-playbook stop.yml
 ```
 
-### Up containers
-
-To spin up your containers you can use the `up.yml` playbook. It's an equivalent of `docker-compose up` command.
-
-```bash
-ansible-playbook up.yml
-```
-
 ### Remove containers and their data
 
-To remove everything and start from scratch you can use `reset.yml` playbook. It's an equivalent of `docker-compose down` command. This command will not remove your code. Please, note this command requires `sudoers` permissions.
+To remove everything and start from scratch you can use `clean.yml` playbook. It's an equivalent of `docker-compose down` command. This command will not remove your code. Please, note this command requires `sudoers` permissions.
 
 ```bash
-ansible-playbook reset.yml --ask-become-pass
+ansible-playbook clean.yml --ask-become-pass
 ```
 
-After resetting your environment you have to run `main.yml` playbook again to spin up your environment.
+After resetting your environment you have to run `up.yml` playbook again to spin up your environment.
 
 ### How to run commands inside containers
 

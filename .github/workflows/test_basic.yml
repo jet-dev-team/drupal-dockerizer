@@ -42,10 +42,10 @@ jobs:
         echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
