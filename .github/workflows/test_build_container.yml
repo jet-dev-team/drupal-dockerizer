@@ -1,4 +1,4 @@
-name: Check basic functionality
+name: Check php container build
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test_container_build:
     runs-on: ubuntu-20.04
     steps:
     - name: Cache Composer dependencies for improve speed
