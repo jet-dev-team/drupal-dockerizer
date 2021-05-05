@@ -23,16 +23,18 @@ ssl_enabled: false
 ssl_cert_path: /var/data/ssl/fullchain.pem
 ssl_key_path: /var/data/ssl/privkey.pem
 
-# Look at available options here: https://hub.docker.com/r/jetdevteam/drupal-php-apache/tags?page=1&ordering=last_updated
-phpversion: php7.4-apache--2
+# Look at available options here: https://hub.docker.com/r/jetdevteam/drupal-dockerizer/tags?page=1&ordering=last_updated
+php_image: jetdevteam/drupal-dockerizer:php7.4-apache--2
+php_memory_limit: 512M
 
 docker_network_gateway_ip:
 domain_name: drupal.devel
 
 # Enviroment variable for php xdebug extensions
+xdebug_install: false
 xdebug_enviroment: >
   remote_enable=1
-  remote_connect_back=1
+  remote_connect_back=0
   remote_port=9008
   remote_host={{ docker_network_gateway_ip }}
   show_error_trace=0

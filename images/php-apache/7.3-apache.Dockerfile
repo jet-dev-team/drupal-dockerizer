@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:7.3-apache
 
 # Surpresses debconf complaints of trying to install apt packages interactively
 # https://github.com/moby/moby/issues/4032#issuecomment-192327844
@@ -34,12 +34,6 @@ RUN apt-get -y update && \
 # Clear Apt
 RUN rm -rf /var/lib/apt/lists/*
 
-# Opcache enviroment
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1" \
-  PHP_OPCACHE_MAX_ACCELERATED_FILES="10000" \
-  PHP_OPCACHE_MEMORY_CONSUMPTION="192" \
-  PHP_OPCACHE_MAX_WASTED_PERCENTAGE="10"
-
 # Update pecl
 RUN pecl channel-update pecl.php.net
 
@@ -57,6 +51,12 @@ RUN git clone https://github.com/php/pecl-php-uploadprogress/ /usr/src/php/ext/u
 RUN docker-php-ext-enable memcached && \
   docker-php-ext-enable imagick && \
   docker-php-ext-enable apcu
+
+# Opcache enviroment
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1" \
+  PHP_OPCACHE_MAX_ACCELERATED_FILES="10000" \
+  PHP_OPCACHE_MEMORY_CONSUMPTION="192" \
+  PHP_OPCACHE_MAX_WASTED_PERCENTAGE="10"
 
 # Install php modulues
 RUN docker-php-ext-install pdo_mysql && \
@@ -85,9 +85,6 @@ RUN a2enmod ssl
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Set memory limit
-RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/memory_limit.ini
-
 # Cleanup
 RUN rm -rf /usr/src/*
 
@@ -104,3 +101,7 @@ RUN chmod 0440 /etc/sudoers.d/dockerizer
 
 ENV APACHE_RUN_USER dockerizer
 ENV APACHE_RUN_GROUP dockerizer
+
+
+
+

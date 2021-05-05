@@ -18,7 +18,7 @@ services:
   webserver:
     build:
       context: ./bin/php/
-    container_name: '{{ compose_project_name }}-{{ phpversion }}'
+    container_name: '{{ compose_project_name }}-webserver'
     restart: 'always'
     working_dir: /var/www/{{ drupal_web_root }}
     sysctls:
