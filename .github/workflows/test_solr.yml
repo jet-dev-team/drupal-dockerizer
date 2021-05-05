@@ -93,6 +93,9 @@ jobs:
     - name: Get solr logs
       run: docker logs drupal-project-solr
 
+    - name: Wait for Solr
+      run: sleep 10;
+
     - name: Generate random nodes
       run: docker exec drupal-project-webserver drush devel-generate:content -y
 
