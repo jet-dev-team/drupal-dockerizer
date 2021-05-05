@@ -54,7 +54,7 @@ jobs:
           --verbose
 
     - name: Change site name by Drush for the first environment
-      run: docker exec drupal-composer-7.4-develop drush cset system.site name DrupalComposer -y
+      run: docker exec drupal-composer-webserver drush cset system.site name DrupalComposer -y
 
     - name: Use Drupal tarball to prepare the second environment
       run: |
@@ -91,7 +91,7 @@ jobs:
           --verbose
 
     - name: Change site name by Drush for the second environment
-      run: docker exec drupal-tarball-7.4-develop drush cset system.site name DrupalTarball -y
+      run: docker exec drupal-tarball-webserver drush cset system.site name DrupalTarball -y
 
     - name: Check Drupal whether the first environment is up on 8080 port
       run: curl http://localhost:8080 | grep "DrupalComposer"
