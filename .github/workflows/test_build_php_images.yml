@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php_version: [7.1, 7.2, 7.3, 7.4, 8.0]
+        php_version: ['7.1', '7.2', '7.3', '7.4', '8.0']
     steps:
     - name: Cache Composer dependencies for improve speed
       uses: actions/cache@v2
@@ -48,7 +48,7 @@ jobs:
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "php_image: php$PHP_VERSION-apache" >> drupal-dockerizer.yml
 
-    - name: Build php apache {{ matrix.php_version }} image
+    - name: Build php apache ${{ matrix.php_version }} image
       env:
         PHP_VERSION: ${{ matrix.php_version }}
       run: docker build -t php$PHP_VERSION-apache - < .drupal-dockerizer/images/php-apache/$PHP_VERSION-apache.Dockerfile
