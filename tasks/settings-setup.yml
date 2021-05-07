@@ -3,7 +3,17 @@
 - name: Make public files dir.
   become: true
   file:
-    path: '{{ drupal_files_dir }}'
+    path: '{{ drupal_public_files_dir }}'
+    state: directory
+    recurse: yes
+    mode: "u=rwx,og=rx"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
+- name: Make private files dir.
+  become: true
+  file:
+    path: '{{ drupal_private_files_dir }}'
     state: directory
     recurse: yes
     mode: "u=rwx,og=rx"
@@ -50,6 +60,7 @@
       ];
       $settings["file_temp_path"] = '/tmp';
       $settings['config_sync_directory'] = '{{drupal_config_sync_folder}}';
+      $settings['file_private_path'] = __DIR__ . '/files/private';
       $settings['trusted_host_patterns'] = [];
       {% if solr %}
       $config['search_api.server.solr']['backend_config']['connector_config']['host'] = '{{ compose_project_name }}-solr';

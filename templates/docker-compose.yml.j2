@@ -43,7 +43,8 @@ services:
 {% endif %}
     volumes:
       - {{ drupal_root_dir }}:/var/www/{{ ":cached" if docker_cached_volume }}
-      - {{ drupal_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
+      - {{ drupal_public_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
+      - {{ drupal_private_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/private{{ ":cached" if docker_cached_volume }}
       - ${VHOSTS_DIR-./apache}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
 {% if ssl_enabled %}
       - {{ ssl_cert_path }}:/etc/apache2/cert.pem{{ ":cached" if docker_cached_volume }}

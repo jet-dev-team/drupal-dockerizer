@@ -1,6 +1,7 @@
 ---
 
 - hosts: all
+
   vars_files:
     - default.config.yml
 
@@ -14,5 +15,7 @@
 
   tasks:
 
-    - name: Include import-database tasks.
-      include: tasks/import-database.yml
+    - name: Down all Docker containers.
+      command: docker-compose -p {{ compose_project_name }} down --remove-orphans
+      args:
+        chdir: "{{ docker_runtime_dir }}"

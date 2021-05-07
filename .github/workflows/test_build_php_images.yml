@@ -65,10 +65,10 @@ jobs:
         PHP_VERSION: ${{ matrix.php_version }}
       run: docker build -t php$PHP_VERSION-apache - < .drupal-dockerizer/images/php-apache/$PHP_VERSION-apache.Dockerfile
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose

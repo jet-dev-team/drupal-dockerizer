@@ -43,10 +43,10 @@ jobs:
         echo "expose_http_port: 80" >> drupal-dockerizer.yml
         echo "db_dump_path: $GITHUB_WORKSPACE/web/dump.sql" >> drupal-dockerizer.yml
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -68,15 +68,15 @@ jobs:
     - name: Destroy containers and runtime
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: reset.yml
+        playbook: clean.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -84,7 +84,7 @@ jobs:
     - name: Import DataBase
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: db.yml
+        playbook: import-database.yml
         directory: .drupal-dockerizer
         options: |
           --verbose

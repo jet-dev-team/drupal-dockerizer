@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - name: Include config override file, if it exists.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - ../drupal-dockerizer.yml
+
+  roles: []
+
+  tasks:
+    - name: Set default failed message
+      set_fact: preflight__failed_message=""
+
+    - name: Include check dump exist task.
+      include: tasks/preflight/database-dump.yml
+
+    - name: Include import-database tasks.
+      include: tasks/import-database.yml

@@ -47,10 +47,10 @@ jobs:
         echo "solr_configs_path: $GITHUB_WORKSPACE/solr_configuration" >> drupal-dockerizer.yml
         echo "solr_version: 8" >> drupal-dockerizer.yml
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
@@ -82,10 +82,10 @@ jobs:
       run: |
         echo "solr: true" >> drupal-dockerizer.yml
 
-    - name: Run main playbook
+    - name: Run up playbook
       uses: dawidd6/action-ansible-playbook@v2
       with:
-        playbook: main.yml
+        playbook: up.yml
         directory: .drupal-dockerizer
         options: |
           --verbose
