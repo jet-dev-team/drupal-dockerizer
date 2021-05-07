@@ -1,0 +1,90 @@
+name: Check SSL connection
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  test_ssl:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Cache Composer dependencies to improve speed
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-drupal
+
+    - name: Get Drupal Project repository
+      uses: actions/checkout@v2
+      with:
+        repository: 'drupal/recommended-project'
+        path: './'
+        ref: '9.2.x'
+
+    - name: Run Composer install
+      run: composer install --ignore-platform-reqs
+
+    - name: Get Drupal Dockerizer repository
+      uses: actions/checkout@v2
+      with:
+        path: '.drupal-dockerizer'
+
+    - name: Create drupal-dockerizer.yml with advanced networking
+      run: |
+        echo "---" > drupal-dockerizer.yml
+        echo "" >> drupal-dockerizer.yml
+        echo "compose_project_name: drupal-project" >> drupal-dockerizer.yml
+        echo "user_uid: $(id -u)" >> drupal-dockerizer.yml
+        echo "user_gid: $(id -g)" >> drupal-dockerizer.yml
+        echo "drupal_root_dir: $GITHUB_WORKSPACE" >> drupal-dockerizer.yml
+        echo "docker_network_gateway_ip: 192.167.22.1" >> drupal-dockerizer.yml
+        echo "domain_name: drupal.devel" >> drupal-dockerizer.yml
+
+    - name: Run up playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: up.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Run drush-commands playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: drush-commands.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Check if the site can be accessed without SSL
+      run: curl http://drupal.devel | grep "Drupal"
+
+    - name: Generate certificates for next step
+      uses: kofemann/action-create-certificate@v0.0.4
+      with:
+        hostcert: 'cert.pem'
+        hostkey:  'private.key'
+        cachain:  'ca-chain.pem'
+
+    - name: Fix ssl permissions
+      run: sudo chown -R $(id -u):$(id -g) *
+
+    - name: Enable ssl in drupal-dockerizer.yml
+      run: |
+        echo "ssl_key_path: $GITHUB_WORKSPACE/private.key" >> drupal-dockerizer.yml
+        echo "ssl_cert_path: $GITHUB_WORKSPACE/cert.pem" >> drupal-dockerizer.yml
+        echo "ssl_enabled: true" >> drupal-dockerizer.yml
+
+    - name: Run up playbook with ssl configuration
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        playbook: up.yml
+        directory: .drupal-dockerizer
+        options: |
+          --verbose
+
+    - name: Check if the site can be accessed via SSL
+      run: curl --insecure -I https://drupal.devel

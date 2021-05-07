@@ -1,4 +1,7 @@
 version: '3.7'
+{% if docker_network_gateway_ip is not none %}
+{% set ip_part = '.'.join(docker_network_gateway_ip.split('.')[:3]) %}
+{% endif %}
 
 services:
 {% if memcache %}
@@ -6,7 +9,7 @@ services:
     image: memcached
     restart: 'always'
     container_name: '{{ compose_project_name }}-memcached'
-{% if advanced_networking %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       - {{ compose_project_name }}-network
 {% endif %}
@@ -15,21 +18,19 @@ services:
   webserver:
     build:
       context: ./bin/php/
-    container_name: '{{ compose_project_name }}-{{ phpversion }}'
+    container_name: '{{ compose_project_name }}-webserver'
     restart: 'always'
     working_dir: /var/www/{{ drupal_web_root }}
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
     depends_on:
-{% if memcache %}
-      - memcached
-{% endif %}
-      - database
-{% if not advanced_networking %}
+      database:
+        condition: service_healthy
+{% if expose_http_port|int > 0 %}
     ports:
-      - "{{ apache_port }}:80"
-{% if ssl_enabled %}
-      - "{{ apache_port_ssl }}:443"
+      - "{{ expose_http_port }}:80"
+{% if ssl_enabled and expose_https_port|int > 0 %}
+      - "{{ expose_https_port }}:443"
 {% endif %}
 {% endif %}
     links:
@@ -42,19 +43,22 @@ services:
 {% endif %}
     volumes:
       - {{ drupal_root_dir }}:/var/www/{{ ":cached" if docker_cached_volume }}
-      - {{ drupal_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
+      - {{ drupal_public_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
+      - {{ drupal_private_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/private{{ ":cached" if docker_cached_volume }}
       - ${VHOSTS_DIR-./apache}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
 {% if ssl_enabled %}
       - {{ ssl_cert_path }}:/etc/apache2/cert.pem{{ ":cached" if docker_cached_volume }}
       - {{ ssl_key_path }}:/etc/apache2/pivate.key{{ ":cached" if docker_cached_volume }}
 {% endif %}
       - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
+{% if xdebug_install %}
     environment:
       XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
-{% if advanced_networking %}
+{% endif %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.10
+        ipv4_address: {{ ip_part }}.10
 {% endif %}
 
   database:
@@ -63,6 +67,11 @@ services:
     container_name: '{{ compose_project_name }}-database'
 {% if database == "mysql" %}
     command: --max_allowed_packet=1048576000 --skip-grant-tables
+    healthcheck:
+      test: ["CMD-SHELL", 'mysql --database=mysql --password={{ mysql_root_password }} --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
+      interval: 3s
+      timeout: 45s
+      retries: 15
 {% endif %}
     restart: 'always'
     volumes:
@@ -73,10 +82,10 @@ services:
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
       MYSQL_PASSWORD: {{ mysql_password }}
-{% if advanced_networking %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.13
+        ipv4_address: {{ ip_part }}.13
 {% endif %}
 
 {% if solr %}
@@ -86,15 +95,17 @@ services:
     build:
       context: "./bin/solr"
     volumes:
-{% if solr_version != 4%}
-      - ./data/solr:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
-{% else %}
-      - ./data/solr:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+{% if solr_version == 8 %}
+      - ./data/solr_data:/var/solr
+{% elif solr_version != 4 %}
+      - ./data/solr_core:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+{% elif solr_version == 4 %}
+      - ./data/solr_core:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
 {% endif %}
-{% if advanced_networking %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.12
+        ipv4_address: {{ ip_part }}.12
 {% endif %}
 {% endif %}
 
@@ -103,12 +114,12 @@ services:
     image: adminer
     container_name: '{{ compose_project_name }}-adminer'
     restart: always
-{% if advanced_networking %}
+{% if docker_network_gateway_ip is not none %}
     networks:
       {{ compose_project_name }}-network:
-        ipv4_address: 192.168.{{ network_id }}.11
+        ipv4_address: {{ ip_part }}.11
 {% endif %}
-{% if not advanced_networking %}
+{% if docker_network_gateway_ip is none %}
     ports:
       - "{{ adminer_port }}:8080"
 {% endif %}
@@ -116,12 +127,12 @@ services:
       - database
 {% endif %}
 
-{% if advanced_networking %}
+{% if docker_network_gateway_ip is not none %}
 networks:
   {{ compose_project_name }}-network:
     driver: bridge
     ipam:
       driver: default
       config:
-        - subnet: 192.168.{{ network_id }}.0/28
+        - subnet: {{ ip_part }}.0/28
 {% endif %}

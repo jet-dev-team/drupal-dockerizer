@@ -9,11 +9,70 @@
     - name: Include config override file, if it exists.
       include_vars: "{{ item }}"
       with_fileglob:
-        - ../config.yml
+        - ../drupal-dockerizer.yml
+
+    - name: Include prefilight tasks
+      include: tasks/preflight.yml
 
   roles: []
 
   tasks:
 
+    - name: Include lamp setup tasks
+      include: tasks/runtime-setup.yml
+
+    - name: Check project tasks.
+      stat:
+        path: "{{pre_task_path}}"
+      register: pre_tasks
+
+    - name: Include custom project pre-tasks
+      include: "{{ item }}"
+      with_first_found:
+        - files:
+            - "{{pre_task_path}}"
+          skip: true
+      when: pre_tasks
+
+    - name: Include solr setup tasks.
+      when: solr
+      include: tasks/solr-setup.yml
+
+    - name: Include Local hosts setup tasks
+      when: docker_network_gateway_ip is not none and domain_name is not none
+      include: tasks/local-hosts-setup.yml
+
+    - name: Include Settings setup tasks
+      include: tasks/settings-setup.yml
+
     - name: Include Docker up tasks
       include: tasks/docker-up.yml
+
+    - name: Include Solr copy core task
+      include: tasks/solr-core-setup.yml
+      when: solr and solr_version == 8
+
+    - name: Include Memcache setup tasks
+      include: tasks/memcache-setup.yml
+      when: memcache
+
+    - name: Include import-database tasks.
+      include: tasks/import-database.yml
+      when: import_database
+
+    - name: Check project tasks.
+      stat:
+        path: "{{post_task_path}}"
+      register: post_tasks
+
+    - name: Include custom project post-tasks
+      include: "{{ item }}"
+      with_first_found:
+        - files:
+            - "{{post_task_path}}"
+          skip: true
+      when: post_tasks
+
+    - name: Run Drush commands.
+      include: tasks/drush-command.yml
+      when: drush_install and run_drush_commands

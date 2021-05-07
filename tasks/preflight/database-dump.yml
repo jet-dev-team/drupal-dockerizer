@@ -1,0 +1,13 @@
+---
+
+  - name: Check that database dump exist
+    stat:
+      path: "{{ db_dump_path }}"
+    register: preflight__database_dump
+
+  - name: Set failed message
+    set_fact: preflight__failed_message="Database dump not exist in {{ db_dump_path }} path. Please, ensure that file exist and you have permissions for file."
+    when: not preflight__database_dump.stat.exists
+
+  - name: Include end_play
+    include: ./end_play.yml

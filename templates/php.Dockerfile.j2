@@ -1,13 +1,33 @@
-FROM jetdevteam/drupal-php-apache:{{ phpversion }}
+FROM {{ php_image }}
 
-{% if user_uid == 0 %}
 USER root
-{% else %}
-USER root
+
+# Create dockerizer user
 ARG USER_UID={{ user_uid }}
 ARG USER_GID={{ user_gid }}
+RUN useradd -ms /bin/bash dockerizer
 RUN groupmod --gid $USER_GID dockerizer && usermod --uid $USER_UID --gid $USER_GID dockerizer
-USER dockerizer
+
+RUN chmod +x /usr/local/bin/docker-php-entrypoint
+
+RUN chown -R dockerizer:dockerizer /var/www
+
+RUN echo dockerizer ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/dockerizer
+RUN chmod 0440 /etc/sudoers.d/dockerizer
+
+ENV APACHE_RUN_USER dockerizer
+ENV APACHE_RUN_GROUP dockerizer
+
+# Set php memory limit
+RUN echo "memory_limit = {{ php_memory_limit }}" >> /usr/local/etc/php/conf.d/memory_limit.ini
+
+# Enable apcu in cofig
+RUN echo "apc.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
+
+{% if xdebug_install %}
+# Install xdebug
+RUN pecl install xdebug-{{ xdebug_version }}
+RUN docker-php-ext-enable xdebug
 {% endif %}
 
 {% if drush_version == 8 %}
@@ -17,3 +37,6 @@ RUN sudo curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush/
 RUN sudo curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-launcher/releases/latest/download/drush.phar" && \
   sudo chmod +x /usr/local/bin/drush
 {% endif %}
+
+USER dockerizer
+
