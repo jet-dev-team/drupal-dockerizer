@@ -13,7 +13,7 @@
 - name: Make private files dir.
   become: true
   file:
-    path: '{{ drupal_public_files_dir }}'
+    path: '{{ drupal_private_files_dir }}'
     state: directory
     recurse: yes
     mode: "u=rwx,og=rx"
