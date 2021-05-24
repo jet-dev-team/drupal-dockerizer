@@ -60,6 +60,7 @@ RUN docker-php-ext-enable memcached && \
 
 # Install php modulues
 RUN docker-php-ext-install pdo_mysql && \
+  docker-php-ext-install bcmath && \
   docker-php-ext-install opcache && \
   docker-php-ext-install imagick && \
   docker-php-ext-install soap && \
