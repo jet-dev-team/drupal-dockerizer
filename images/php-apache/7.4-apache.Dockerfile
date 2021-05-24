@@ -60,6 +60,7 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1" \
 
 # Install php modulues
 RUN docker-php-ext-install pdo_mysql && \
+  docker-php-ext-install bcmath && \
   docker-php-ext-install opcache && \
   docker-php-ext-install uploadprogress && \
   docker-php-ext-install pdo_sqlite && \
