@@ -25,8 +25,8 @@ RUN apt-get -y update && \
   curl \
   libmemcached-dev \
   libonig-dev \
-  libcurl4 \
-  libcurl4-openssl-dev \
+  libcurl3 \
+  libcurl3-openssl-dev \
   zip \
   openssl \
   libxml2-dev
@@ -46,8 +46,7 @@ RUN pecl channel-update pecl.php.net
 # Install pecl modules
 RUN pecl install \
   imagick \
-  memcached \
-  apcu-5.1.19
+  memcached-2.2.0
 
 # Configure uploadprogress
 RUN git clone https://github.com/php/pecl-php-uploadprogress/ /usr/src/php/ext/uploadprogress/ && \
@@ -55,8 +54,7 @@ RUN git clone https://github.com/php/pecl-php-uploadprogress/ /usr/src/php/ext/u
 
 # Enable php modules
 RUN docker-php-ext-enable memcached && \
-  docker-php-ext-enable imagick && \
-  docker-php-ext-enable apcu
+  docker-php-ext-enable imagick
 
 # Opcache enviroment
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1" \
@@ -95,8 +93,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set memory limit
 RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/memory_limit.ini
 
-# Enable apcu in cofig
-RUN echo "apc.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-apcu.ini
-
 # Cleanup
 RUN rm -rf /usr/src/*
+
+ENTRYPOINT ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
