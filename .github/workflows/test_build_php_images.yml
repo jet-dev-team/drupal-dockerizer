@@ -13,6 +13,8 @@ jobs:
     strategy:
       matrix:
         include:
+        - php_version: '5.6'
+          drupal_version: '7.78'
         - php_version: '7.1'
           drupal_version: '8.6.18'
         - php_version: '7.2'
