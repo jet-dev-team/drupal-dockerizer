@@ -29,6 +29,7 @@ RUN apt-get -y update && \
   libcurl3-openssl-dev \
   zip \
   openssl \
+  unzip \
   libxml2-dev
 
 # Clear Apt
