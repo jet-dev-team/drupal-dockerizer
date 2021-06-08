@@ -60,7 +60,9 @@ jobs:
         echo "  - cc drush" >> drupal-dockerizer.yml
         echo "  - site-install standard install_configure_form.enable_update_status_module=NULL" >> drupal-dockerizer.yml
         echo "  - cr" >> drupal-dockerizer.yml
-
+        echo "custom_drupal_settings: |" >> drupal-dockerizer.yml
+        echo "  $conf['drupal_http_request_fails'] = FALSE;" >> drupal-dockerizer.yml
+        echo "  $conf['mail_system'] = array('default-system' => 'TestingMailSystem');" >> drupal-dockerizer.yml
 
     - name: Build php apache ${{ matrix.php_version }} image
       env:
