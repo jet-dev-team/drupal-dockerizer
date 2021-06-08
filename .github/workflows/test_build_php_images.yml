@@ -59,7 +59,6 @@ jobs:
         echo "drush_commands:" >> drupal-dockerizer.yml
         echo "  - cc drush" >> drupal-dockerizer.yml
         echo "  - site-install standard install_configure_form.enable_update_status_module=NULL" >> drupal-dockerizer.yml
-        echo "  - cr" >> drupal-dockerizer.yml
 
     - name: Fix for drupal 7
       if: ${{ matrix.php_version == '5.6' }}
