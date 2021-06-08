@@ -71,6 +71,7 @@ services:
       interval: 3s
       timeout: 45s
       retries: 15
+      start_period: 15s
     restart: 'always'
     volumes:
       - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql{{ ":cached" if docker_cached_volume }}
