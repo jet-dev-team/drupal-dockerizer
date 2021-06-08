@@ -69,8 +69,8 @@ services:
     healthcheck:
       test: ["CMD-SHELL", 'mysql --database=mysql --password={{ mysql_root_password }} --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
       interval: 3s
-      timeout: 45s
-      retries: 15
+      timeout: 120s
+      retries: 40
       start_period: 15s
     restart: 'always'
     volumes:
