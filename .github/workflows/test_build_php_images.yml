@@ -64,9 +64,13 @@ jobs:
     - name: Fix for drupal 7
       if: ${{ matrix.php_version == '5.6' }}
       run: |
+        echo "" >> drupal-dockerizer.yml
         echo "custom_drupal_settings: |" >> drupal-dockerizer.yml
         echo "  $conf['drupal_http_request_fails'] = FALSE;" >> drupal-dockerizer.yml
         echo "  $conf['mail_system'] = array('default-system' => 'TestingMailSystem');" >> drupal-dockerizer.yml
+
+    - name: Cat settings.php
+      run: cat ./sites/default/settings.php
 
     - name: Build php apache ${{ matrix.php_version }} image
       env:
