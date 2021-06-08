@@ -70,7 +70,7 @@ jobs:
         echo "  $conf['mail_system'] = array('default-system' => 'TestingMailSystem');" >> drupal-dockerizer.yml
 
     - name: Cat settings.php
-      run: cat ./sites/default/settings.php
+      run: cat ./drupal-tarball/sites/default/settings.php
 
     - name: Build php apache ${{ matrix.php_version }} image
       env:
