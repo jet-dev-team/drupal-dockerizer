@@ -59,7 +59,14 @@ jobs:
         echo "drush_commands:" >> drupal-dockerizer.yml
         echo "  - cc drush" >> drupal-dockerizer.yml
         echo "  - site-install standard install_configure_form.enable_update_status_module=NULL" >> drupal-dockerizer.yml
-        echo "  - cr" >> drupal-dockerizer.yml
+
+    - name: Fix for drupal 7
+      if: ${{ matrix.php_version == '5.6' }}
+      run: |
+        echo "" >> drupal-dockerizer.yml
+        echo "custom_drupal_settings: |" >> drupal-dockerizer.yml
+        echo "  \$conf['drupal_http_request_fails'] = FALSE;" >> drupal-dockerizer.yml
+        echo "  \$conf['mail_system'] = array('default-system' => 'TestingMailSystem');" >> drupal-dockerizer.yml
 
 
     - name: Build php apache ${{ matrix.php_version }} image
@@ -74,6 +81,9 @@ jobs:
         directory: .drupal-dockerizer
         options: |
           --verbose
+
+    - name: Cat settings.php
+      run: cat ./drupal-tarball/sites/default/settings.php
 
     - name: Run drush-commands playbook
       uses: dawidd6/action-ansible-playbook@v2
