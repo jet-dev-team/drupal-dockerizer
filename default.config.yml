@@ -86,6 +86,9 @@ adminer_port: 8080
 pre_task_path: ../pre_task.yml
 post_task_path: ../post_task.yml
 
+install_mailhog: false
+mailhog_expose_port:
+
 custom_drupal_settings: |
   if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
     include $app_root . '/' . $site_path . '/settings.local.php';

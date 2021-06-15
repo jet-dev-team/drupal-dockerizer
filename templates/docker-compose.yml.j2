@@ -35,6 +35,9 @@ services:
 {% endif %}
     links:
       - database
+{% if install_mailhog %}
+      - mail
+{% endif %}
 {% if memcache %}
       - memcached
 {% endif %}
@@ -124,6 +127,22 @@ services:
 {% endif %}
     links:
       - database
+{% endif %}
+
+{% if install_mailhog %}
+  mail:
+    image: mailhog/mailhog
+    container_name: '{{ compose_project_name }}-mail'
+    restart: always
+{% if docker_network_gateway_ip is not none %}
+    networks:
+      {{ compose_project_name }}-network:
+        ipv4_address: {{ ip_part }}.5
+{% endif %}
+{% if mailhog_expose_port %}
+    ports:
+      - "{{mailhog_expose_port}}:8025"
+{% endif %}
 {% endif %}
 
 {% if docker_network_gateway_ip is not none %}
