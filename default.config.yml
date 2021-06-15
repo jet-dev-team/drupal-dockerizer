@@ -77,6 +77,7 @@ mysql_root_password: root
 mysql_user: docker
 mysql_password: docker
 mysql_database: docker
+mysql_volume_archive: "{{drupal_root_dir}}/mysql_volume.tar.gz"
 # If set to true import database after up conteiners.
 import_database: false
 

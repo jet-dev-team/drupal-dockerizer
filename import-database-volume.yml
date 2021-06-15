@@ -1,0 +1,31 @@
+---
+
+- hosts: all
+  vars_files:
+    - default.config.yml
+
+  pre_tasks:
+    - name: Include config override file, if it exists.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - ../drupal-dockerizer.yml
+
+  roles: []
+
+  tasks:
+
+    - name: Stop all Docker containers.
+      command: docker-compose -p {{ compose_project_name }} stop
+      args:
+        chdir: "{{ docker_runtime_dir }}"
+
+    - name: Remove old database data.
+      command: rm -rf {{ docker_runtime_dir }}/data/mysql
+
+    - name: Unpack database.
+      command: tar -xzvf {{mysql_volume_archive}} -C {{ docker_runtime_dir }}/data/
+
+    - name: UP all Docker containers.
+      command: docker-compose -p {{ compose_project_name }} up -d
+      args:
+        chdir: "{{ docker_runtime_dir }}"
