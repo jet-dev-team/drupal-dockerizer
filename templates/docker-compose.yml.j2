@@ -145,14 +145,6 @@ services:
 {% endif %}
 {% endif %}
 
-  autoheal:
-    image: willfarrell/autoheal:latest
-    tty: true
-    container_name: autoheal
-    restart: always
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
 {% if docker_network_gateway_ip is not none %}
 networks:
   {{ compose_project_name }}-network:
