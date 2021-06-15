@@ -1,6 +1,11 @@
 ---
 
+- name: Build Docker containers.
+  command: docker-compose -p {{ compose_project_name }} build --pull
+  args:
+    chdir: "{{ docker_runtime_dir }}"
+
 - name: Bring up the Docker containers.
-  command: docker-compose -p {{ compose_project_name }} up --build -d --remove-orphans
+  command: docker-compose -p {{ compose_project_name }} up -d --remove-orphans
   args:
     chdir: "{{ docker_runtime_dir }}"
