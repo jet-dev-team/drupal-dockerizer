@@ -2,7 +2,6 @@
 
 compose_project_name: my-project
 docker_runtime_dir: "runtime-{{compose_project_name}}"
-docker_cached_volume: true
 
 user_uid: 1000
 user_gid: 1000

@@ -6,6 +6,6 @@
     chdir: "{{ docker_runtime_dir }}"
 
 - name: Bring up the Docker containers.
-  command: docker-compose -p {{ compose_project_name }} up -d --remove-orphans
-  args:
+  shell:
+    cmd: sleep 1; docker-compose -p {{ compose_project_name }} up -d --remove-orphans; sleep 1;
     chdir: "{{ docker_runtime_dir }}"
