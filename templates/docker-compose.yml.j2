@@ -24,8 +24,7 @@ services:
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
     depends_on:
-      database:
-        condition: service_healthy
+      - database
 {% if expose_http_port|int > 0 %}
     ports:
       - "{{ expose_http_port }}:80"
@@ -69,12 +68,6 @@ services:
       context: "./bin/database"
     container_name: '{{ compose_project_name }}-database'
     command: --max_allowed_packet=1048576000 --skip-grant-tables
-    healthcheck:
-      test: [ "CMD", "mysql-healthcheck"]
-      interval: 3s
-      timeout: 120s
-      retries: 40
-      start_period: 20s
     restart: 'always'
     volumes:
       - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
