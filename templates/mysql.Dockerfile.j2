@@ -1,5 +1,7 @@
 FROM mysql:5.7
 
+COPY mysql-healthcheck /usr/local/bin/
+
 {% if user_uid != 0 %}
 ARG USER_UID={{ user_uid }}
 ARG USER_GID={{ user_gid }}

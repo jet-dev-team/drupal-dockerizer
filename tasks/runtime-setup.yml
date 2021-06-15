@@ -87,6 +87,15 @@
     owner: "{{user_uid|int}}"
     group: "{{user_gid|int}}"
 
+- name: Ensure mysql Healthcheck is present.
+  become: true
+  template:
+    src: "templates/mysql-healthcheck.j2"
+    dest: "{{ docker_runtime_dir }}/bin/database/mysql-healthcheck"
+    mode: "u=rwx,og=rx"
+    owner: "{{user_uid|int}}"
+    group: "{{user_gid|int}}"
+
 - name: Ensure Docker Compose file is present.
   become: true
   template:
