@@ -70,7 +70,7 @@ services:
     container_name: '{{ compose_project_name }}-database'
     command: --max_allowed_packet=1048576000 --skip-grant-tables
     healthcheck:
-      test: ["CMD-SHELL", 'mysql --database=mysql --password={{ mysql_root_password }} --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 3s
       timeout: 120s
       retries: 40
