@@ -24,8 +24,7 @@ services:
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
     depends_on:
-      database:
-        condition: service_healthy
+      - database
 {% if expose_http_port|int > 0 %}
     ports:
       - "{{ expose_http_port }}:80"
@@ -35,6 +34,9 @@ services:
 {% endif %}
     links:
       - database
+{% if install_mailhog %}
+      - mail
+{% endif %}
 {% if memcache %}
       - memcached
 {% endif %}
@@ -42,15 +44,15 @@ services:
       - solr
 {% endif %}
     volumes:
-      - {{ drupal_root_dir }}:/var/www/{{ ":cached" if docker_cached_volume }}
-      - {{ drupal_public_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/{{ ":cached" if docker_cached_volume }}
-      - {{ drupal_private_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/private{{ ":cached" if docker_cached_volume }}
-      - ${VHOSTS_DIR-./apache}:/etc/apache2/sites-enabled{{ ":cached" if docker_cached_volume }}
+      - {{ drupal_root_dir }}:/var/www/
+      - {{ drupal_public_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/
+      - {{ drupal_private_files_dir }}:/var/www/{{ drupal_web_root }}/sites/default/files/private
+      - ${VHOSTS_DIR-./apache}:/etc/apache2/sites-enabled
 {% if ssl_enabled %}
-      - {{ ssl_cert_path }}:/etc/apache2/cert.pem{{ ":cached" if docker_cached_volume }}
-      - {{ ssl_key_path }}:/etc/apache2/pivate.key{{ ":cached" if docker_cached_volume }}
+      - {{ ssl_cert_path }}:/etc/apache2/cert.pem
+      - {{ ssl_key_path }}:/etc/apache2/pivate.key
 {% endif %}
-      - ${LOG_DIR-./logs/apache2}:/var/log/apache2{{ ":cached" if docker_cached_volume }}
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
 {% if xdebug_install %}
     environment:
       XDEBUG_CONFIG: "{{ xdebug_enviroment }}"
@@ -66,16 +68,10 @@ services:
       context: "./bin/database"
     container_name: '{{ compose_project_name }}-database'
     command: --max_allowed_packet=1048576000 --skip-grant-tables
-    healthcheck:
-      test: ["CMD-SHELL", 'mysql --database=mysql --password={{ mysql_root_password }} --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
-      interval: 3s
-      timeout: 120s
-      retries: 40
-      start_period: 15s
     restart: 'always'
     volumes:
-      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql{{ ":cached" if docker_cached_volume }}
-      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql{{ ":cached" if docker_cached_volume }}
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
     environment:
       MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
       MYSQL_DATABASE: {{ mysql_database }}
@@ -97,9 +93,9 @@ services:
 {% if solr_version == 8 %}
       - ./data/solr_data:/var/solr
 {% elif solr_version != 4 %}
-      - ./data/solr_core:/opt/solr/server/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+      - ./data/solr_core:/opt/solr/server/solr/{{ solr_core_name }}
 {% elif solr_version == 4 %}
-      - ./data/solr_core:/opt/solr/example/solr/{{ solr_core_name }}{{ ":cached" if docker_cached_volume }}
+      - ./data/solr_core:/opt/solr/example/solr/{{ solr_core_name }}
 {% endif %}
 {% if docker_network_gateway_ip is not none %}
     networks:
@@ -124,6 +120,22 @@ services:
 {% endif %}
     links:
       - database
+{% endif %}
+
+{% if install_mailhog %}
+  mail:
+    image: mailhog/mailhog
+    container_name: '{{ compose_project_name }}-mail'
+    restart: always
+{% if docker_network_gateway_ip is not none %}
+    networks:
+      {{ compose_project_name }}-network:
+        ipv4_address: {{ ip_part }}.5
+{% endif %}
+{% if mailhog_expose_port %}
+    ports:
+      - "{{mailhog_expose_port}}:8025"
+{% endif %}
 {% endif %}
 
 {% if docker_network_gateway_ip is not none %}

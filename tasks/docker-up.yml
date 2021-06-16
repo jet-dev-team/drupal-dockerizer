@@ -1,6 +1,25 @@
 ---
 
-- name: Bring up the Docker containers.
-  command: docker-compose -p {{ compose_project_name }} up --build -d --remove-orphans
+- name: Build Docker containers.
+  command: docker-compose -p {{ compose_project_name }} build --pull
   args:
     chdir: "{{ docker_runtime_dir }}"
+
+- name: Bring up the Docker containers.
+  command: docker-compose -p {{ compose_project_name }} up -d
+  args:
+    chdir: "{{ docker_runtime_dir }}"
+
+- name: Add DataBase as inventory host.
+  add_host:
+    name: "{{ compose_project_name }}-database"
+    ansible_connection: docker
+  changed_when: false
+
+- name: DataBase Healthcheck.
+  delegate_to: "{{ compose_project_name }}-database"
+  become: no
+  raw: "mysqladmin ping -h localhost"
+  register: database_health
+  until: database_health is not failed
+  retries: 7
