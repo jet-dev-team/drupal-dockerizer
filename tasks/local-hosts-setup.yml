@@ -12,4 +12,7 @@
       {% if solr %}
       {{ ip_part }}.12 solr.{{ domain_name }}
       {% endif %}
+      {% if install_mailhog %}
+      {{ ip_part }}.5 mail.{{ domain_name }}
+      {% endif %}
       {{ ip_part }}.13 db.{{ domain_name }}

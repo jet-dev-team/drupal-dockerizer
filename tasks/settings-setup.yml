@@ -66,6 +66,14 @@
       $config['search_api.server.solr']['backend_config']['connector_config']['host'] = '{{ compose_project_name }}-solr';
       $config['search_api.server.solr']['backend_config']['connector_config']['core'] = '{{ solr_core_name }}';
       {% endif %}
+      {% if install_mailhog %}
+      $config['smtp.settings']['smtp_on'] = TRUE;
+      $config['smtp.settings']['smtp_host'] = '{{ compose_project_name }}-mail';
+      $config['smtp.settings']['smtp_port'] = '1025';
+      $config['smtp.settings']['smtp_username'] = '';
+      $config['smtp.settings']['smtp_password'] = '';
+      $config['smtp.settings']['smtp_allowhtml'] = TRUE;
+      {% endif %}
       $settings["hash_salt"] = '{{ drupal_hash_salt }}';
 
 - name: Add custom settings to settings.php
