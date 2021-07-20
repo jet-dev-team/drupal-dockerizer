@@ -40,3 +40,25 @@ RUN sudo curl -fsSL -o /usr/local/bin/drush "https://github.com/drush-ops/drush-
 
 USER dockerizer
 
+{% if node_version %}
+# Install nvm.
+# Set default shel for build to bash.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ENV NODE_VERSION {{node_version}}
+
+ENV NVM_DIR /home/dockerizer/.nvm
+
+# Clone nvm repository.
+RUN git clone --depth 1 --branch v0.38.0 https://github.com/nvm-sh/nvm.git /home/dockerizer/.nvm
+
+# Configure nvm.
+RUN echo 'export NVM_DIR="$HOME/.nvm"'                                       >> "$HOME/.bashrc"
+RUN echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> "$HOME/.bashrc"
+RUN echo '[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion" # This loads nvm bash_completion' >> "$HOME/.bashrc"
+
+# nodejs and tools
+RUN bash -c 'source $HOME/.nvm/nvm.sh   && \
+    nvm install $NODE_VERSION && \
+    npm install --prefix "$HOME/.nvm/"'
+{% endif %}
