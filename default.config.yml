@@ -31,7 +31,8 @@ docker_network_gateway_ip:
 domain_name: drupal.devel
 
 # Install nvm and node with npm to webserver container.
-node_version:
+node_install: false
+node_version: 14
 nvm_version: v0.38.0
 
 # Enviroment variable for php xdebug extensions
