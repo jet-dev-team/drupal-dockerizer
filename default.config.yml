@@ -30,10 +30,10 @@ php_memory_limit: 512M
 docker_network_gateway_ip:
 domain_name: drupal.devel
 
-# Install nvm and node with npm to webserver container.
-node_install: false
+# Install node with npm to webserver container.
+# See https://github.com/nodesource/distributions#installation-instructions for available version.
+node_install: true
 node_version: 14
-nvm_version: v0.38.0
 
 # Enviroment variable for php xdebug extensions
 xdebug_install: false

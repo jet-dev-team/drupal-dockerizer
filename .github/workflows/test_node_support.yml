@@ -52,9 +52,6 @@ jobs:
         options: |
           --verbose
 
-    - name: Check nvm version
-      run: docker exec drupal-project-webserver nvm --version || { echo 'nvm does not installed' ; exit 1; };
-
     - name: Check node version
       run: docker exec drupal-project-webserver node --version || { echo 'nodejs does not installed' ; exit 1; };
 
