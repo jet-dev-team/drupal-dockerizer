@@ -114,9 +114,9 @@ services:
       {{ compose_project_name }}-network:
         ipv4_address: {{ ip_part }}.11
 {% endif %}
-{% if docker_network_gateway_ip is none %}
+{% if adminer_expose_port %}
     ports:
-      - "{{ adminer_port }}:8080"
+      - "{{ adminer_expose_port }}:8080"
 {% endif %}
     links:
       - database

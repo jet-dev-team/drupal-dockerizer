@@ -81,7 +81,7 @@ mysql_volume_archive: "{{drupal_root_dir}}/mysql_volume.tar.gz"
 import_database: false
 
 install_adminer: false
-adminer_port: 8080
+adminer_expose_port:
 
 pre_task_path: ../pre_task.yml
 post_task_path: ../post_task.yml
