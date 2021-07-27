@@ -43,5 +43,4 @@ USER dockerizer
 {% if node_install %}
 RUN curl -fsSL https://deb.nodesource.com/setup_{{node_version}}.x | sudo -E bash -
 RUN sudo apt-get install -y nodejs
-
 {% endif %}
