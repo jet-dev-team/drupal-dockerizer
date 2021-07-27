@@ -32,7 +32,7 @@ domain_name: drupal.devel
 
 # Install node with npm to webserver container.
 # See https://github.com/nodesource/distributions#installation-instructions for available version.
-node_install: true
+node_install: false
 node_version: 14
 
 # Enviroment variable for php xdebug extensions
