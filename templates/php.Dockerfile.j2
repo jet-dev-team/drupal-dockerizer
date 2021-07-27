@@ -51,7 +51,7 @@ ENV NODE_VERSION {{node_version}}
 ENV NVM_DIR /home/dockerizer/.nvm
 
 # Clone nvm repository.
-RUN git clone --depth 1 --branch v{{ nvm_version }} https://github.com/nvm-sh/nvm.git /home/dockerizer/.nvm
+RUN git clone --depth 1 --branch {{ nvm_version }} https://github.com/nvm-sh/nvm.git /home/dockerizer/.nvm
 
 # Configure nvm.
 RUN echo 'export NVM_DIR="$HOME/.nvm"'                                       >> "$HOME/.bashrc"
