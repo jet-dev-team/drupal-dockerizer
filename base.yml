@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  webserver:
+    privileged: true
+    restart: 'always'
+    build:
+      context: ./build
+      dockerfile: php-${PHP_VERSION}-apache.Dockerfile
+      args:
+        USER_UID: ${USER_UID-1000}
+        USER_GID: ${USER_GID-1000}
+        USER_NAME: ${USER}
+        XDEBUG_INSTALL: ${XDEBUG_INSTALL-false}
+        XDEBUG_VERSION: ${XDEBUG_VERSION-3.0.4}
+        PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT-512M}
+        NODE_INSTALL: ${NODE_INSTALL-false}
+        NODE_VERSION: ${NODE_VERSION-14}
+        DRUPAL_WEB_ROOT: ${DRUPAL_WEB_ROOT}
+        EXPOSE_HTTP_PORT: ${EXPOSE_HTTP_PORT}
+        DOCKER_NETWORK_GATEWAY_IP: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.1
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME
+      DRUPAL_WEB_ROOT: ${DRUPAL_WEB_ROOT}
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      DRUSH_ALLOW_XDEBUG: ${DRUSH_ALLOW_XDEBUG-0}
+
+  database:
+    restart: 'always'
+    image: mysql:${DATABASE_VERSION}
+    healthcheck:
+      test: [ "CMD-SHELL", "mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'use $MYSQL_DATABASE' || exit 1"]
+      interval: 3s
+      timeout: 120s
+      retries: 40
+      start_period: 20s
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+
+  adminer:
+    image: adminer
+    profiles: ["adminer"]
+    restart: always
+
+  mailhog:
+    image: mailhog/mailhog
+    profiles: ["mailhog"]
+    restart: always
+
+  solr:
+    image: solr:${SOLR_VERSION-8}
+    restart: 'always'
+    profiles: ["solr"]
+

@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  webserver:
+    extends:
+      file: ../base.yml
+      service: webserver
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "${EXPOSE_HTTP_PORT}:80"
+    networks:
+      drupal-network:
+        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.10
+    working_dir: /var/www/${DRUPAL_WEB_ROOT-web}
+    volumes:
+      - ../${DRUPAL_ROOT_DIR}:/var/www/
+      - ../data/settings.php:/var/www/${DRUPAL_WEB_ROOT}/sites/default/settings.php
+      - ../data/apache/development_apache.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ../data/logs/apache2:/var/log/apache2
+
+  database:
+    networks:
+      drupal-network:
+        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.11
+    extends:
+      file: ../base.yml
+      service: database
+    volumes:
+      - db-data:/var/lib/mysql
+
+  adminer:
+    networks:
+      drupal-network:
+        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.12
+    extends:
+      file: ../base.yml
+      service: adminer
+    ports:
+      - "${ADMINER_EXPOSE_PORT}:8080"
+
+  mailhog:
+    networks:
+      drupal-network:
+        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.13
+    extends:
+      file: ../base.yml
+      service: mailhog
+    ports:
+      - "${MAILHOG_EXPOSE_PORT}:8025"
+
+volumes:
+  db-data:
+
+
+networks:
+  drupal-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.0/28

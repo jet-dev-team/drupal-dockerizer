@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "hostname": "172.12.13.1",
+      "port": 9000,
+      "pathMappings": {
+        "/var/www": "${workspaceFolder}"
+      }
+    }
+  ]
+}

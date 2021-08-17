@@ -1,0 +1,5 @@
+/data/logs/*
+drupal_project/
+/docker-compose*
+/*.env
+.vscode
