@@ -102,9 +102,9 @@ RUN if [ "$XDEBUG_INSTALL" = "false" ] ; then\
     pecl install xdebug-$XDEBUG_VERSION;\
     docker-php-ext-enable xdebug;\
     xdebug_conf_path=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini;\
-    echo "xdebug.client_host=${DOCKER_NETWORK_GATEWAY_IP}" >> $xdebug_conf_path;\
+    echo "xdebug.client_host=host.docker.internal" >> $xdebug_conf_path;\
     echo "xdebug.client_port=9000" >> $xdebug_conf_path;\
-    echo "xdebug.mode=debug,develop" >> $xdebug_conf_path;\
+    echo "xdebug.mode=debug" >> $xdebug_conf_path;\
     echo "xdebug.start_with_request=yes" >> $xdebug_conf_path;\
   fi
 

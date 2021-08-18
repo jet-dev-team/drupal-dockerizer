@@ -10,9 +10,8 @@ services:
         condition: service_healthy
     ports:
       - "${EXPOSE_HTTP_PORT}:80"
-    networks:
-      drupal-network:
-        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.10
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     working_dir: /var/www/${DRUPAL_WEB_ROOT-web}
     volumes:
       - ${DRUPAL_ROOT_DIR-../}:/var/www/
@@ -21,9 +20,6 @@ services:
       - ./data/logs/apache2:/var/log/apache2
 
   database:
-    networks:
-      drupal-network:
-        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.11
     extends:
       file: base.yml
       service: database
@@ -31,9 +27,6 @@ services:
       - db-data:/var/lib/mysql
 
   adminer:
-    networks:
-      drupal-network:
-        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.12
     extends:
       file: base.yml
       service: adminer
@@ -41,9 +34,6 @@ services:
       - "${ADMINER_EXPOSE_PORT}:8080"
 
   mailhog:
-    networks:
-      drupal-network:
-        ipv4_address: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.13
     extends:
       file: base.yml
       service: mailhog
@@ -53,11 +43,3 @@ services:
 volumes:
   db-data:
   solr-data:
-
-networks:
-  drupal-network:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: ${DOCKER_NETWORK_GATEWAY_IP-172.20.10}.0/28
